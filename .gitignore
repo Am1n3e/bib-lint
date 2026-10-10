@@ -49,3 +49,11 @@ junit.xml
 *.swp
 *.swo
 *~
+
+# Local OpenSpec planning and generated Codex skills
+/openspec/
+/.agents/skills/openspec-*/
+/.agents/skills/.openspec-target
+
+# Local development reports
+/tests/COVERAGE.md

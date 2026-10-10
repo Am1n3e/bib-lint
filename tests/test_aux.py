@@ -3,7 +3,6 @@ import json
 import pytest
 
 from bib_lint import parse_bib
-from bib_lint.cli import main
 
 
 def setup_inputs(tmp_path, text):
@@ -18,7 +17,8 @@ def test_combined_output_and_summary(tmp_path, capsys):
     bib, aux = setup_inputs(
         tmp_path, "\\citation{Used, missing}\n\\citation{Used}\n\\bibcite{Unused}{1}\n"
     )
-    assert main(["parse", str(bib), "--aux", str(aux)]) == 0
+    first, second = parse_bib(bib, aux)
+    assert first.error is second.error is None
     report = json.loads(bib.with_suffix(".tmp.json").read_text())
     assert report["summary"] == {"total_count": 2, "total_not_used": 1}
     assert [item["validations"] for item in report["items"]] == [
@@ -27,9 +27,8 @@ def test_combined_output_and_summary(tmp_path, capsys):
     ]
     assert report["items"][0]["entry"]["fields"]["title"] == "A"
     assert list(tmp_path.glob("*.json")) == [bib.with_suffix(".tmp.json")]
-    summary = capsys.readouterr().out
-    assert "unused: 1; missing from bibliography: 1; errors: 0" in summary
-    assert "Missing citation keys: missing" in summary
+    assert second.unused == 1
+    assert second.missing == ["missing"]
 
 
 def test_nested_inputs_cycles_comments_and_case(tmp_path):
@@ -72,9 +71,8 @@ def test_aux_failure_preserves_previous_report(tmp_path, text):
 def test_missing_aux_does_not_write_partial_report(tmp_path, capsys):
     bib, aux = setup_inputs(tmp_path, "")
     aux.unlink()
-    assert main(["parse", str(bib), "--aux", str(aux)]) == 2
+    assert parse_bib(bib, aux)[1].error
     assert not bib.with_suffix(".tmp.json").exists()
-    assert "JSON not written" in capsys.readouterr().out
 
 
 def test_output_cannot_overwrite_included_aux(tmp_path):

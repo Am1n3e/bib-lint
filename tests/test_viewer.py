@@ -1,11 +1,11 @@
 import copy
 import hashlib
 import json
-from pathlib import Path
 
 import pytest
 from defusedxml.common import EntitiesForbidden
 from streamlit.testing.v1 import AppTest
+from support import viewer_main
 
 from bib_lint.viewer.data import comparison_rows, pretty_xml, read_response, suggestions, table_rows
 
@@ -53,7 +53,9 @@ def test_all_rows_counts_and_status():
 
 def test_comparisons_and_evidence_based_proposals():
     item = fixture_report()["items"][0]
-    assert comparison_rows(item)[0]["Provider"] == "2025"
+    row = comparison_rows(item)[0]
+    assert list(row) == ["Source", "Field", "Status", "Your value", "Source's value"]
+    assert row["Source's value"] == "2025"
     assert suggestions(item)[0]["Suggested"] == "2025"
     uncertain = copy.deepcopy(item)
     uncertain["validations"]["correctness"]["is_correct"] = None
@@ -85,25 +87,61 @@ def test_streamlit_overview_detail_and_back(tmp_path, monkeypatch):
     report = tmp_path / "references.json"
     report.write_text(json.dumps(fixture_report()))
     monkeypatch.chdir(tmp_path)
-    app_file = Path(__file__).resolve().parents[1] / "src/bib_lint/viewer/app.py"
-    app = AppTest.from_file(str(app_file), default_timeout=30).run()
+    app = AppTest.from_function(viewer_main, default_timeout=30).run()
     assert not app.exception
     assert len(app.dataframe[0].value) == 2
+    assert all(metric.help for metric in app.metric)
     metrics = {metric.label: metric.value for metric in app.metric}
+    assert list(metrics) == [
+        "Total",
+        "Used",
+        "Progress",
+        "Skipped",
+        "Correct",
+        "Invalid",
+        "Unresolved",
+        "Partial match",
+        "Needs review",
+    ]
     assert metrics == {
         "Total": "2",
-        "Progress": "2/2",
         "Used": "1/2",
+        "Progress": "1/1",
         "Skipped": "1/2",
         "Correct": "0/1",
         "Invalid": "1/1",
         "Unresolved": "0/1",
+        "Partial match": "0/1",
+        "Needs review": "0/1",
     }
     app.query_params["key"] = "sample"
     app.run()
     assert not app.exception
-    assert app.title[0].value == "sample"
+    assert app.header[0].value == "sample"
+    assert all(metric.help for metric in app.metric)
     assert [tab.label for tab in app.tabs] == ["Comparison", "Cached responses", "Raw log"]
-    app.button[0].click().run()
+    next(button for button in app.button if button.label == "← All references").click().run()
     assert not app.exception
     assert app.title[0].value == "Bib-Lint"
+
+
+def test_overview_filters_keep_global_metrics(tmp_path, monkeypatch):
+    report = fixture_report()
+    # Put unused first to exercise filtering independently of source row order.
+    report["items"].reverse()
+    (tmp_path / "references.json").write_text(json.dumps(report))
+    monkeypatch.chdir(tmp_path)
+    app = AppTest.from_function(viewer_main).run()
+    app.toggle[0].set_value(True).run()
+    assert not app.exception
+    assert list(app.dataframe[0].value["Citation key"]) == ["sample"]
+    assert app.metric[0].value == "2"
+    app.toggle[0].set_value(False)
+    app.toggle[1].set_value(True).run()
+    assert list(app.dataframe[0].value["Citation key"]) == ["sample"]
+    report["items"][1]["validations"]["correctness"]["is_correct"] = True
+    (tmp_path / "references.json").write_text(json.dumps(report))
+    app.run()
+    assert not app.exception
+    assert not app.dataframe
+    assert app.info[0].value == "No references match these filters."

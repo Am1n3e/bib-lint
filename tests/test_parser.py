@@ -3,8 +3,7 @@ import json
 
 import pytest
 
-from bib_lint import BibliographyParseError, parse_file, parse_string
-from bib_lint.cli import main
+from bib_lint import BibliographyParseError, parse_bib, parse_file, parse_string
 
 SOURCE = r"""% Original comment
 @string{venue = "Journal of " # "Examples"}
@@ -107,56 +106,33 @@ def test_empty_input_and_serialization():
     assert result.to_dict(include_source=True)["source_text"] == "% No entries\n"
 
 
-def test_cli_json(tmp_path, capsys):
+def test_parse_api_source_and_serialization(tmp_path):
     path = tmp_path / "input.bib"
     path.write_text(SOURCE)
-    assert main(["parse", str(path), "--include-source"]) == 0
-    output = capsys.readouterr()
-    data = json.loads(path.with_suffix(".tmp.json").read_text())
-    assert "Parsing:" in output.out
-    assert "total entries found: 2; errors: 0" in output.out
-    assert output.err == ""
+    result, _ = parse_bib(path, include_source=True)
+    assert result.error is None
+    data = json.loads(result.output.read_text())
     assert data["schema_version"] == 2
     assert data["summary"]["total_count"] == 2
-    assert data["items"][0]["entry"]["key"] == "MixedCase2026"
     assert data["source_text"] == SOURCE
-    assert data["summary"]["total_not_used"] is None
     assert all(item["validations"] == {} for item in data["items"])
     assert path.read_text() == SOURCE
 
 
 @pytest.mark.parametrize("mode", ["missing", "invalid", "encoding"])
-def test_cli_failures_have_no_partial_json(tmp_path, capsys, mode):
+def test_parse_failure_has_no_partial_report(tmp_path, mode):
     path = tmp_path / "input.bib"
-    args = ["parse", str(path)]
     if mode == "invalid":
         path.write_text("@book{ok,title={Good}}\n@book{bad,title=unknown}")
     elif mode == "encoding":
         path.write_text(SOURCE)
-        args += ["--encoding", "not-a-codec"]
-    assert main(args) == 2
-    output = capsys.readouterr()
-    assert "total entries found: unknown" in output.out
-    assert "errors: 1; JSON not written" in output.out
-    assert not path.with_suffix(".tmp.json").exists()
-    assert output.err.startswith("Error: ")
-    assert "Traceback" not in output.err
-
-
-def test_cli_custom_output_and_failed_parse_preserves_previous_json(tmp_path, capsys):
-    source = tmp_path / "input.bib"
-    destination = tmp_path / "report.tmp.json"
-    source.write_text(SOURCE)
-    assert main(["parse", str(source), "-o", str(destination)]) == 0
-    previous = destination.read_bytes()
-    assert json.loads(previous)["summary"]["total_count"] == 2
-    source.write_text("@book{x,title=undefinedmacro}")
-    assert main(["parse", str(source), "--output", str(destination)]) == 2
-    assert destination.read_bytes() == previous
+    result, _ = parse_bib(path, encoding="not-a-codec" if mode == "encoding" else "utf-8")
+    assert result.error
+    assert not result.output.exists()
 
 
 @pytest.mark.parametrize("alias", ["same", "symlink", "hardlink"])
-def test_cli_cannot_overwrite_input(tmp_path, alias, capsys):
+def test_parse_api_protects_inputs(tmp_path, alias):
     source = tmp_path / "input.bib"
     source.write_text(SOURCE)
     destination = source if alias == "same" else tmp_path / "alias.json"
@@ -164,22 +140,20 @@ def test_cli_cannot_overwrite_input(tmp_path, alias, capsys):
         destination.symlink_to(source)
     elif alias == "hardlink":
         destination.hardlink_to(source)
-    assert main(["parse", str(source), "-o", str(destination)]) == 2
+    result, _ = parse_bib(source, output=destination)
+    assert "must not overwrite" in result.error
     assert source.read_text() == SOURCE
-    assert "must not overwrite" in capsys.readouterr().err
 
 
-def test_cli_output_failure_reports_parsed_count(tmp_path, capsys):
+def test_parse_write_failure_and_previous_preservation(tmp_path):
     source = tmp_path / "input.bib"
     source.write_text(SOURCE)
-    destination = tmp_path / "missing" / "report.json"
-    assert main(["parse", str(source), "-o", str(destination)]) == 2
-    assert "total entries found: 2; errors: 1" in capsys.readouterr().out
-
-
-def test_cli_empty_bibliography(tmp_path, capsys):
-    source = tmp_path / "empty.bib"
-    source.write_text("% empty")
-    assert main(["parse", str(source)]) == 0
-    assert "total entries found: 0; errors: 0" in capsys.readouterr().out
-    assert json.loads(source.with_suffix(".tmp.json").read_text())["items"] == []
+    destination = tmp_path / "report.json"
+    result, _ = parse_bib(source, output=destination)
+    previous = result.output.read_bytes()
+    source.write_text("@book{x,title=undefinedmacro}")
+    assert parse_bib(source, output=destination)[0].error
+    assert result.output.read_bytes() == previous
+    source.write_text(SOURCE)
+    result, _ = parse_bib(source, output=tmp_path / "missing" / "report.json")
+    assert result.error and result.total == 2

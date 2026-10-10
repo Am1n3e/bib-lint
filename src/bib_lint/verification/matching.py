@@ -144,7 +144,18 @@ def compare_fields(original, found):
         if left and right:
             if field == "authors":
                 a, b = author_names(original), author_names(found)
-                if a == b:
+                if a and a[-1] == "others" and "others" not in a[:-1]:
+                    prefix = a[:-1]
+                    if prefix and len(b) > len(prefix) and prefix == b[: len(prefix)]:
+                        state = "partial_match"
+                    elif len(b) < len(prefix):
+                        state = "mismatch"
+                    elif prefix:
+                        prefix_check = compare_fields(
+                            {"authors": left[:-1]}, {"authors": right[: len(prefix)]}
+                        )[1]["result"]
+                        state = "mismatch" if prefix_check == "mismatch" else "unknown"
+                elif a == b:
                     state = "match"
                 elif len(a) != len(b) and "others" not in a:
                     state = "mismatch"
@@ -166,10 +177,8 @@ def compare_fields(original, found):
                 if field == "venue" and "arxiv" in normalize(left) and "arxiv" in normalize(right):
                     same = True
                 state = "match" if same else "mismatch"
-                if field in {"title", "venue"} and state == "mismatch":
-                    state = (
-                        "unknown"  # Abbreviations/near matches need review, not an invented fix.
-                    )
+                if field == "venue" and state == "mismatch":
+                    state = "unknown"  # Venue abbreviations need review, not an invented fix.
         elif field == "venue" and not left:
             state = "not_checked"
         comparisons.append({"field": field, "input": left, "found": right, "result": state})

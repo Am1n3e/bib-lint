@@ -277,6 +277,5 @@ METHODS = {
     "crossref": verify_reference_crossref,
     "arxiv": verify_reference_arxiv,
     "openalex": verify_reference_openalex,
-    "semantic_scholar": verify_reference_semantic_scholar,
     "publisher": verify_reference_publisher,
 }

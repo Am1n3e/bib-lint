@@ -81,6 +81,10 @@ def build_consensus(methods):
             ):
                 correct = True
                 reason = "Checked citation fields match the authoritative record"
+            elif any(
+                c["result"] == "partial_match" for m in primary for c in m.get("comparisons", [])
+            ):
+                reason = "Listed authors match in order; the bibliography omits remaining authors"
             else:
                 reason = "Record identified, but some citation fields remain unverified"
     return {
@@ -89,7 +93,7 @@ def build_consensus(methods):
         "methods": methods,
         "canonical_ref": canonical,
         "reason": reason,
-        "policy_version": 2,
+        "policy_version": 4,
         "checked_fields": ["title", "authors", "year", "venue", "doi", "arxiv"],
         "scope": "Core citation metadata only; not claim support, pages, volume, or edition",
     }

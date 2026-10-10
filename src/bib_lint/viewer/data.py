@@ -7,29 +7,35 @@ from urllib.parse import urlsplit
 
 from defusedxml import minidom
 
+from bib_lint.scope import validate_report
+from bib_lint.status import field_status, reference_status
 from bib_lint.verification.matching import compare_fields, input_record
 
 
 def load_report(path):
     path = Path(path)
+    if path.is_dir():
+        checkpoint = path / "report.tmp.json"
+        path = checkpoint if checkpoint.exists() else path / "report.json"
     if not path.exists() and path.name.endswith(".tmp.json"):
         path = path.with_name(path.name[:-9] + ".json")
     report = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(report, dict) or not isinstance(report.get("items"), list):
         raise ValueError("Choose a bib-lint report containing items.")
     for item in report["items"]:
-        if not isinstance(item.get("entry"), dict) or not isinstance(item.get("validations"), dict):
+        if (
+            not isinstance(item, dict)
+            or not isinstance(item.get("entry"), dict)
+            or not isinstance(item.get("validations"), dict)
+        ):
             raise ValueError("Report items must contain entry and validations objects.")
+    if report.get("schema_version") == 3:
+        validate_report(report)
     return report
 
 
 def correctness(item):
-    result = item["validations"].get("correctness")
-    if not result:
-        return "Pending" if item["validations"].get("is_used") else "Skipped"
-    if result.get("complete") is False:
-        return "Pending"
-    return {True: "Yes", False: "No", None: "Unresolved"}[result.get("is_correct")]
+    return reference_status(item["validations"])
 
 
 def record_urls(item):
@@ -87,6 +93,7 @@ def note(item):
 
 def table_rows(report):
     rows = []
+    has_agent = any(i.get("agent_review") or i.get("stale_agent_review") for i in report["items"])
     for item in report["items"]:
         result = item["validations"].get("correctness")
         methods = result.get("methods", []) if result else []
@@ -100,9 +107,23 @@ def table_rows(report):
                     item["validations"].get("is_used")
                 ],
                 "Status": correctness(item),
+                **(
+                    {"Agent": item.get("agent_review", {}).get("status", "Not checked")}
+                    if has_agent
+                    else {}
+                ),
                 "Found": f"{found}/{applicable}" if result else "—",
                 "Consensus": f"{agree}/{found}" if result else "—",
                 "Note": note(item),
+                **(
+                    {
+                        "Agent note": item.get("agent_review", {}).get(
+                            "summary", "Stale evidence" if item.get("stale_agent_review") else ""
+                        )
+                    }
+                    if has_agent
+                    else {}
+                ),
             }
         )
     return rows
@@ -132,21 +153,43 @@ def comparison_rows(item, show_matches=False):
                 continue
             rows.append(
                 {
-                    "Method": method["name"],
+                    "Source": method["name"],
                     "Field": comparison["field"],
-                    "Your entry": display(comparison.get("input")),
-                    "Provider": display(comparison.get("found")),
-                    "Result": state,
+                    "Status": field_status(state),
+                    "Your value": display(comparison.get("input")),
+                    "Source's value": display(comparison.get("found")),
                 }
             )
+    for comparison in item.get("agent_review", {}).get("comparisons", []):
+        if not show_matches and comparison["result"] == "match":
+            continue
+        rows.append(
+            {
+                "Source": "agent",
+                "Field": comparison["field"],
+                "Status": field_status(comparison["result"]),
+                "Your value": display(comparison.get("input")),
+                "Source's value": display(comparison.get("found")),
+            }
+        )
     return rows
 
 
 def suggestions(item):
     result = item["validations"].get("correctness", {})
+    agent_rows = [
+        {
+            "Field": c["field"],
+            "Current": display(c.get("input")),
+            "Suggested": display(c["found"]),
+            "Source": "agent",
+        }
+        for c in item.get("agent_review", {}).get("comparisons", [])
+        if c["result"] == "mismatch" and c.get("found") is not None
+    ]
     if result.get("is_correct") is not False or result.get("complete") is False:
-        return []
-    rows = []
+        return agent_rows
+    rows = agent_rows
     seen = set()
     for method in result.get("methods", []):
         if not method.get("authority") or method.get("agrees_with_consensus") is not True:

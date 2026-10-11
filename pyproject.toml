@@ -23,6 +23,9 @@ requires = ["uv_build>=0.12.1,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
+benchmark = [
+    "hallmark @ git+https://github.com/rpatrik96/hallmark@f774fa40675daa83eca6201637a94c4536b7bb3e",
+]
 dev = [
     "pytest>=9.1.1",
     "coverage>=7.10,<8",
@@ -32,6 +35,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 markers = ["unit: isolated parsing and metadata decisions", "workflow: filesystem and CLI contracts", "ui: local viewer interactions and jobs", "package: isolated installed distribution checks"]
 
 [tool.coverage.run]

@@ -1,0 +1,6229 @@
+{
+  "schema_version": 1,
+  "source": "agent",
+  "created_at": "2026-09-26T09:22:02.651478+00:00",
+  "report_sha256": "72371e0d94e63ec8b7ad02bb79fe27000eeebe215be53bfe2b55458b7fb33cdf",
+  "scope": "All 52 used citations, including every automated outcome; 95 unused entries excluded. Separate web-assisted assessment; never a vote in API consensus.",
+  "summary": {
+    "reviewed": 52,
+    "by_status": {
+      "Invalid": 1,
+      "Partial match": 2,
+      "Correct": 44,
+      "Needs review": 5
+    }
+  },
+  "items": [
+    {
+      "citation_key": "lambert2024tulu",
+      "entry_sha256": "c3466a8876c5408c158dbc314e612fd6907abfa687e6700d1a9c9da7a3967b86",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Invalid",
+      "summary": "The record and ordered authors match, but the input title contains a literal quote instead of a TeX umlaut command. Ai2 uses Tülu; repair the title encoding.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "T\"ulu 3: Pushing Frontiers in Open Language Model Post-Training"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2411.15124",
+          "supports": "The record and ordered authors match, but the input title contains a literal quote instead of a TeX umlaut command. Ai2 uses Tülu; repair the title encoding.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://allenai.org/blog/tulu-3-technical",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "T{\"u}lu 3: Pushing Frontiers in Open Language Model Post-Training",
+          "found": "T{\\\"u}lu 3: Pushing Frontiers in Open Language Model Post-Training",
+          "result": "mismatch",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2411.15124",
+            "https://allenai.org/blog/tulu-3-technical"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Nathan",
+              "family": "Lambert",
+              "suffix": ""
+            },
+            {
+              "given": "Jacob",
+              "family": "Morrison",
+              "suffix": ""
+            },
+            {
+              "given": "Valentina",
+              "family": "Pyatkin",
+              "suffix": ""
+            },
+            {
+              "given": "Shengyi",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Hamish",
+              "family": "Ivison",
+              "suffix": ""
+            },
+            {
+              "given": "Faeze",
+              "family": "Brahman",
+              "suffix": ""
+            },
+            {
+              "given": "Lester James V.",
+              "family": "Miranda",
+              "suffix": ""
+            },
+            {
+              "given": "Alisa",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Nouha",
+              "family": "Dziri",
+              "suffix": ""
+            },
+            {
+              "given": "Shane",
+              "family": "Lyu",
+              "suffix": ""
+            },
+            {
+              "given": "Yuling",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Saumya",
+              "family": "Malik",
+              "suffix": ""
+            },
+            {
+              "given": "Victoria",
+              "family": "Graf",
+              "suffix": ""
+            },
+            {
+              "given": "Jena D.",
+              "family": "Hwang",
+              "suffix": ""
+            },
+            {
+              "given": "Jiangjiang",
+              "family": "Yang",
+              "suffix": ""
+            },
+            {
+              "given": "Ronan",
+              "family": "Le Bras",
+              "suffix": ""
+            },
+            {
+              "given": "Oyvind",
+              "family": "Tafjord",
+              "suffix": ""
+            },
+            {
+              "given": "Chris",
+              "family": "Wilhelm",
+              "suffix": ""
+            },
+            {
+              "given": "Luca",
+              "family": "Soldaini",
+              "suffix": ""
+            },
+            {
+              "given": "Noah A.",
+              "family": "Smith",
+              "suffix": ""
+            },
+            {
+              "given": "Yizhong",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Pradeep",
+              "family": "Dasigi",
+              "suffix": ""
+            },
+            {
+              "given": "Hannaneh",
+              "family": "Hajishirzi",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Nathan",
+              "family": "Lambert",
+              "suffix": ""
+            },
+            {
+              "given": "Jacob",
+              "family": "Morrison",
+              "suffix": ""
+            },
+            {
+              "given": "Valentina",
+              "family": "Pyatkin",
+              "suffix": ""
+            },
+            {
+              "given": "Shengyi",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Hamish",
+              "family": "Ivison",
+              "suffix": ""
+            },
+            {
+              "given": "Faeze",
+              "family": "Brahman",
+              "suffix": ""
+            },
+            {
+              "given": "Lester James V.",
+              "family": "Miranda",
+              "suffix": ""
+            },
+            {
+              "given": "Alisa",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Nouha",
+              "family": "Dziri",
+              "suffix": ""
+            },
+            {
+              "given": "Shane",
+              "family": "Lyu",
+              "suffix": ""
+            },
+            {
+              "given": "Yuling",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Saumya",
+              "family": "Malik",
+              "suffix": ""
+            },
+            {
+              "given": "Victoria",
+              "family": "Graf",
+              "suffix": ""
+            },
+            {
+              "given": "Jena D.",
+              "family": "Hwang",
+              "suffix": ""
+            },
+            {
+              "given": "Jiangjiang",
+              "family": "Yang",
+              "suffix": ""
+            },
+            {
+              "given": "Ronan",
+              "family": "Le Bras",
+              "suffix": ""
+            },
+            {
+              "given": "Oyvind",
+              "family": "Tafjord",
+              "suffix": ""
+            },
+            {
+              "given": "Chris",
+              "family": "Wilhelm",
+              "suffix": ""
+            },
+            {
+              "given": "Luca",
+              "family": "Soldaini",
+              "suffix": ""
+            },
+            {
+              "given": "Noah A.",
+              "family": "Smith",
+              "suffix": ""
+            },
+            {
+              "given": "Yizhong",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Pradeep",
+              "family": "Dasigi",
+              "suffix": ""
+            },
+            {
+              "given": "Hannaneh",
+              "family": "Hajishirzi",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2411.15124"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2411.15124"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "guo2025deepseek",
+      "entry_sha256": "155c56f3dcd8c0d06398050bf29410e60cad4cd11610fc53718c4ed74c3c59f3",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Partial match",
+      "summary": "The supplied 11-name prefix matches v2, followed by BibTeX others. The complete author list is not supplied. Initial submission was in 2025; v2 was revised in January 2026. Search snippets for v1 have a different author order; do not use them to reorder v2.",
+      "checked_fields": [
+        "title",
+        "author prefix",
+        "year"
+      ],
+      "search_queries": [
+        "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2501.12948v2",
+          "supports": "The supplied 11-name prefix matches v2, followed by BibTeX others. The complete author list is not supplied. Initial submission was in 2025; v2 was revised in January 2026. Search snippets for v1 have a different author order; do not use them to reorder v2.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "DeepSeek-R1: Incentivizing Reasoning Capability in {LLM}s via Reinforcement Learning",
+          "found": "DeepSeek-R1: Incentivizing Reasoning Capability in {LLM}s via Reinforcement Learning",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2501.12948v2"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "",
+              "family": "{DeepSeek-AI}",
+              "suffix": ""
+            },
+            {
+              "given": "Daya",
+              "family": "Guo",
+              "suffix": ""
+            },
+            {
+              "given": "Dejian",
+              "family": "Yang",
+              "suffix": ""
+            },
+            {
+              "given": "Haowei",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Junxiao",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Peiyi",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Qihao",
+              "family": "Zhu",
+              "suffix": ""
+            },
+            {
+              "given": "Runxin",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Ruoyu",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Shirong",
+              "family": "Ma",
+              "suffix": ""
+            },
+            {
+              "given": "Xiao",
+              "family": "Bi",
+              "suffix": ""
+            },
+            {
+              "given": "",
+              "family": "others",
+              "suffix": ""
+            }
+          ],
+          "found": "Matching ordered prefix; the primary record lists additional authors. See Agent evidence.",
+          "result": "partial_match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2501.12948v2"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2501.12948v2"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "choudhary2011water",
+      "entry_sha256": "bd9add23968c91388d0fad73f6de9c646e87502793378ccb456ec13f27151d44",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The author's publication list confirms the title, four ordered authors, ETSE workshop and 2011 year.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "WATER: Web Application TEst Repair"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://shauvik.com/publications/",
+          "supports": "The author's publication list confirms the title, four ordered authors, ETSE workshop and 2011 year.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://shauvik.com/public/pubs/roychoudhary11etse.pdf",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{WATER}: Web Application TEst Repair",
+          "found": "{WATER}: Web Application TEst Repair",
+          "result": "match",
+          "evidence_urls": [
+            "https://shauvik.com/publications/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Shauvik Roy",
+              "family": "Choudhary",
+              "suffix": ""
+            },
+            {
+              "given": "Dan",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Husayn",
+              "family": "Versee",
+              "suffix": ""
+            },
+            {
+              "given": "Alessandro",
+              "family": "Orso",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Shauvik Roy",
+              "family": "Choudhary",
+              "suffix": ""
+            },
+            {
+              "given": "Dan",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Husayn",
+              "family": "Versee",
+              "suffix": ""
+            },
+            {
+              "given": "Alessandro",
+              "family": "Orso",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://shauvik.com/publications/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2011",
+          "found": "2011",
+          "result": "match",
+          "evidence_urls": [
+            "https://shauvik.com/publications/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "leotta2014visual",
+      "entry_sha256": "6aca0383fa64ecd84ec9a250139b16ec19f6ef0938706daba861803ed176a268",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The author-hosted paper confirms the title, four ordered authors and 2014 Springer publication; its DOI is 10.1007/978-3-319-08245-5_19.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Visual vs. DOM-Based Web Locators: An Empirical Study"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://sepl.dibris.unige.it/publications/2014-leotta-ICWE.pdf",
+          "supports": "The author-hosted paper confirms the title, four ordered authors and 2014 Springer publication; its DOI is 10.1007/978-3-319-08245-5_19.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Visual vs. {DOM}-Based Web Locators: An Empirical Study",
+          "found": "Visual vs. {DOM}-Based Web Locators: An Empirical Study",
+          "result": "match",
+          "evidence_urls": [
+            "https://sepl.dibris.unige.it/publications/2014-leotta-ICWE.pdf"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Maurizio",
+              "family": "Leotta",
+              "suffix": ""
+            },
+            {
+              "given": "Diego",
+              "family": "Clerissi",
+              "suffix": ""
+            },
+            {
+              "given": "Filippo",
+              "family": "Ricca",
+              "suffix": ""
+            },
+            {
+              "given": "Paolo",
+              "family": "Tonella",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Maurizio",
+              "family": "Leotta",
+              "suffix": ""
+            },
+            {
+              "given": "Diego",
+              "family": "Clerissi",
+              "suffix": ""
+            },
+            {
+              "given": "Filippo",
+              "family": "Ricca",
+              "suffix": ""
+            },
+            {
+              "given": "Paolo",
+              "family": "Tonella",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://sepl.dibris.unige.it/publications/2014-leotta-ICWE.pdf"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2014",
+          "found": "2014",
+          "result": "match",
+          "evidence_urls": [
+            "https://sepl.dibris.unige.it/publications/2014-leotta-ICWE.pdf"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "leotta2016robula",
+      "entry_sha256": "7e7fe1db329c25a1e21fcb0625a049c88dc56eb6e21b931b32a68c940eeff27e",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "Wiley confirms the title, authors and 2016 journal record. The automated title discrepancy comes from literal <scp> markup in Crossref, not a different title. Volume 28 and pages 177–204 agree.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "ROBULA+: An Algorithm for Generating Robust XPath Locators for Web Testing"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/smr.1771",
+          "supports": "Wiley confirms the title, authors and 2016 journal record. The automated title discrepancy comes from literal <scp> markup in Crossref, not a different title. Volume 28 and pages 177–204 agree.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ROBULA+}: An Algorithm for Generating Robust {XPath} Locators for Web Testing",
+          "found": "{ROBULA+}: An Algorithm for Generating Robust {XPath} Locators for Web Testing",
+          "result": "match",
+          "evidence_urls": [
+            "https://onlinelibrary.wiley.com/doi/abs/10.1002/smr.1771"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Maurizio",
+              "family": "Leotta",
+              "suffix": ""
+            },
+            {
+              "given": "Andrea",
+              "family": "Stocco",
+              "suffix": ""
+            },
+            {
+              "given": "Filippo",
+              "family": "Ricca",
+              "suffix": ""
+            },
+            {
+              "given": "Paolo",
+              "family": "Tonella",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Maurizio",
+              "family": "Leotta",
+              "suffix": ""
+            },
+            {
+              "given": "Andrea",
+              "family": "Stocco",
+              "suffix": ""
+            },
+            {
+              "given": "Filippo",
+              "family": "Ricca",
+              "suffix": ""
+            },
+            {
+              "given": "Paolo",
+              "family": "Tonella",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://onlinelibrary.wiley.com/doi/abs/10.1002/smr.1771"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2016",
+          "found": "2016",
+          "result": "match",
+          "evidence_urls": [
+            "https://onlinelibrary.wiley.com/doi/abs/10.1002/smr.1771"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "stocco2018vista",
+      "entry_sha256": "34205010af5da35e093e88fb30241e3177b50abc8bf03f0e836ccd022bc49c49",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The authors' repository confirms Visual Web Test Repair, Stocco/Yandrapally/Mesbah and ESEC/FSE 2018. This review confirms core metadata; the ACM page range was not independently rechecked.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Visual Web Test Repair"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://github.com/saltlab/vista",
+          "supports": "The authors' repository confirms Visual Web Test Repair, Stocco/Yandrapally/Mesbah and ESEC/FSE 2018. This review confirms core metadata; the ACM page range was not independently rechecked.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Visual Web Test Repair",
+          "found": "Visual Web Test Repair",
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/saltlab/vista"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Andrea",
+              "family": "Stocco",
+              "suffix": ""
+            },
+            {
+              "given": "Rahulkrishna",
+              "family": "Yandrapally",
+              "suffix": ""
+            },
+            {
+              "given": "Ali",
+              "family": "Mesbah",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Andrea",
+              "family": "Stocco",
+              "suffix": ""
+            },
+            {
+              "given": "Rahulkrishna",
+              "family": "Yandrapally",
+              "suffix": ""
+            },
+            {
+              "given": "Ali",
+              "family": "Mesbah",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/saltlab/vista"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2018",
+          "found": "2018",
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/saltlab/vista"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "thomas2015hcpi",
+      "entry_sha256": "447de610c778bb7e028f05ab672f795de9ce13b96dfbab9cd96eea6cea565c97",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The author-hosted paper identifies Philip S. Thomas, Georgios Theocharous and Mohammad Ghavamzadeh, the matching title and ICML 2015.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "High Confidence Policy Improvement"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://psthomas.com/papers/Thomas2015b.pdf",
+          "supports": "The author-hosted paper identifies Philip S. Thomas, Georgios Theocharous and Mohammad Ghavamzadeh, the matching title and ICML 2015.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "High Confidence Policy Improvement",
+          "found": "High Confidence Policy Improvement",
+          "result": "match",
+          "evidence_urls": [
+            "https://psthomas.com/papers/Thomas2015b.pdf"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Philip S.",
+              "family": "Thomas",
+              "suffix": ""
+            },
+            {
+              "given": "Georgios",
+              "family": "Theocharous",
+              "suffix": ""
+            },
+            {
+              "given": "Mohammad",
+              "family": "Ghavamzadeh",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Philip S.",
+              "family": "Thomas",
+              "suffix": ""
+            },
+            {
+              "given": "Georgios",
+              "family": "Theocharous",
+              "suffix": ""
+            },
+            {
+              "given": "Mohammad",
+              "family": "Ghavamzadeh",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://psthomas.com/papers/Thomas2015b.pdf"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2015",
+          "found": "2015",
+          "result": "match",
+          "evidence_urls": [
+            "https://psthomas.com/papers/Thomas2015b.pdf"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "levine2020offline",
+      "entry_sha256": "e2c41cb9858c82b484c06f2126821a50bd706792e44eee5f23a1acbb5bd446c7",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record matches the title, four ordered authors and May 2020 initial submission. The entry cites the preprint.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Offline Reinforcement Learning: Tutorial, Review, and Perspectives on Open Problems"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2005.01643",
+          "supports": "The arXiv record matches the title, four ordered authors and May 2020 initial submission. The entry cites the preprint.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Offline Reinforcement Learning: Tutorial, Review, and Perspectives on Open Problems",
+          "found": "Offline Reinforcement Learning: Tutorial, Review, and Perspectives on Open Problems",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2005.01643"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Sergey",
+              "family": "Levine",
+              "suffix": ""
+            },
+            {
+              "given": "Aviral",
+              "family": "Kumar",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Tucker",
+              "suffix": ""
+            },
+            {
+              "given": "Justin",
+              "family": "Fu",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Sergey",
+              "family": "Levine",
+              "suffix": ""
+            },
+            {
+              "given": "Aviral",
+              "family": "Kumar",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Tucker",
+              "suffix": ""
+            },
+            {
+              "given": "Justin",
+              "family": "Fu",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2005.01643"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2020",
+          "found": "2020",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2005.01643"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "gelman2013bayesian",
+      "entry_sha256": "653cfb1b063fd0f879b83166e6b2de4672f0a052dc891ad436168e0e638d8309",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The publisher confirms the six ordered authors, third edition, 2013 copyright and Chapman & Hall imprint.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "edition",
+        "publisher"
+      ],
+      "search_queries": [
+        "Bayesian Data Analysis"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://www.routledge.com/link/link/p/book/9781439840955",
+          "supports": "The publisher confirms the six ordered authors, third edition, 2013 copyright and Chapman & Hall imprint.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Bayesian Data Analysis",
+          "found": "Bayesian Data Analysis",
+          "result": "match",
+          "evidence_urls": [
+            "https://www.routledge.com/link/link/p/book/9781439840955"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Andrew",
+              "family": "Gelman",
+              "suffix": ""
+            },
+            {
+              "given": "John B.",
+              "family": "Carlin",
+              "suffix": ""
+            },
+            {
+              "given": "Hal S.",
+              "family": "Stern",
+              "suffix": ""
+            },
+            {
+              "given": "David B.",
+              "family": "Dunson",
+              "suffix": ""
+            },
+            {
+              "given": "Aki",
+              "family": "Vehtari",
+              "suffix": ""
+            },
+            {
+              "given": "Donald B.",
+              "family": "Rubin",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Andrew",
+              "family": "Gelman",
+              "suffix": ""
+            },
+            {
+              "given": "John B.",
+              "family": "Carlin",
+              "suffix": ""
+            },
+            {
+              "given": "Hal S.",
+              "family": "Stern",
+              "suffix": ""
+            },
+            {
+              "given": "David B.",
+              "family": "Dunson",
+              "suffix": ""
+            },
+            {
+              "given": "Aki",
+              "family": "Vehtari",
+              "suffix": ""
+            },
+            {
+              "given": "Donald B.",
+              "family": "Rubin",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://www.routledge.com/link/link/p/book/9781439840955"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2013",
+          "found": "2013",
+          "result": "match",
+          "evidence_urls": [
+            "https://www.routledge.com/link/link/p/book/9781439840955"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "dengMind2WebGeneralistAgent2023a",
+      "entry_sha256": "00ac3dd6fda6dc843d9f0fb8805c99994b544958078de39dc19966ce1da9e24f",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The NeurIPS 2023 paper confirms title and authors. The paper uses Samuel Stevens, while the landing page abbreviates this to Sam Stevens; retain the paper's name.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Mind2Web: Towards a Generalist Agent for the Web"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://papers.nips.cc/paper/2023/file/5950bf290a1570ea401bf98882128160-Paper-Datasets_and_Benchmarks.pdf",
+          "supports": "The NeurIPS 2023 paper confirms title and authors. The paper uses Samuel Stevens, while the landing page abbreviates this to Sam Stevens; retain the paper's name.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://papers.nips.cc/paper_files/paper/2023/hash/5950bf290a1570ea401bf98882128160-Abstract-Datasets_and_Benchmarks.html",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{Mind2Web}: Towards a Generalist Agent for the Web",
+          "found": "{Mind2Web}: Towards a Generalist Agent for the Web",
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper/2023/file/5950bf290a1570ea401bf98882128160-Paper-Datasets_and_Benchmarks.pdf"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Xiang",
+              "family": "Deng",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Boyuan",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Shijie",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Samuel",
+              "family": "Stevens",
+              "suffix": ""
+            },
+            {
+              "given": "Boshi",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Huan",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Su",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Xiang",
+              "family": "Deng",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Boyuan",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Shijie",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Samuel",
+              "family": "Stevens",
+              "suffix": ""
+            },
+            {
+              "given": "Boshi",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Huan",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Su",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper/2023/file/5950bf290a1570ea401bf98882128160-Paper-Datasets_and_Benchmarks.pdf"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2023",
+          "found": "2023",
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper/2023/file/5950bf290a1570ea401bf98882128160-Paper-Datasets_and_Benchmarks.pdf"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "levy_st-webagentbench_2025",
+      "entry_sha256": "353d0392c9ed69c28fefa5c9661c342889cb71c3b3da6e353e2d81cd38459387",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The explicitly linked v4 was revised on 19 May 2025 and has the six supplied authors. The 2024 first-submission date does not invalidate this version-specific May 2025 citation.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "ST-WebAgentBench: A Benchmark for Evaluating Safety and Trustworthiness in Web Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2410.06703v4",
+          "supports": "The explicitly linked v4 was revised on 19 May 2025 and has the six supplied authors. The 2024 first-submission date does not invalidate this version-specific May 2025 citation.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ST}-{WebAgentBench}: {A} {Benchmark} for {Evaluating} {Safety} and {Trustworthiness} in {Web} {Agents}",
+          "found": "{ST}-{WebAgentBench}: {A} {Benchmark} for {Evaluating} {Safety} and {Trustworthiness} in {Web} {Agents}",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2410.06703v4"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Ido",
+              "family": "Levy",
+              "suffix": ""
+            },
+            {
+              "given": "Ben",
+              "family": "Wiesel",
+              "suffix": ""
+            },
+            {
+              "given": "Sami",
+              "family": "Marreed",
+              "suffix": ""
+            },
+            {
+              "given": "Alon",
+              "family": "Oved",
+              "suffix": ""
+            },
+            {
+              "given": "Avi",
+              "family": "Yaeli",
+              "suffix": ""
+            },
+            {
+              "given": "Segev",
+              "family": "Shlomov",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Ido",
+              "family": "Levy",
+              "suffix": ""
+            },
+            {
+              "given": "Ben",
+              "family": "Wiesel",
+              "suffix": ""
+            },
+            {
+              "given": "Sami",
+              "family": "Marreed",
+              "suffix": ""
+            },
+            {
+              "given": "Alon",
+              "family": "Oved",
+              "suffix": ""
+            },
+            {
+              "given": "Avi",
+              "family": "Yaeli",
+              "suffix": ""
+            },
+            {
+              "given": "Segev",
+              "family": "Shlomov",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2410.06703v4"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2410.06703v4"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "liu2024large",
+      "entry_sha256": "f38dea5deffa86741ebc4469be53cf17c106e742b6b87d17434b76a0b915b1af",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record matches title, seven ordered authors and September 2024 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Large language model-based agents for software engineering: A survey"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2409.02977",
+          "supports": "The arXiv record matches title, seven ordered authors and September 2024 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Large language model-based agents for software engineering: {A} survey",
+          "found": "Large language model-based agents for software engineering: {A} survey",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.02977"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Junwei",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Kaixin",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yixuan",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Xin",
+              "family": "Peng",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenpeng",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Lingming",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yiling",
+              "family": "Lou",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Junwei",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Kaixin",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yixuan",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Xin",
+              "family": "Peng",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenpeng",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Lingming",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yiling",
+              "family": "Lou",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.02977"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.02977"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wang2024executablecodeactionselicit",
+      "entry_sha256": "d550318ac99f75505b0cf404e205748c68e7a0b4085d8d388e3ed7c9543ca71b",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "PMLR confirms the title, seven ordered authors and ICML 2024. The proceedings record is preferable evidence to an index's preprint record.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Executable Code Actions Elicit Better LLM Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://proceedings.mlr.press/v235/wang24h.html",
+          "supports": "PMLR confirms the title, seven ordered authors and ICML 2024. The proceedings record is preferable evidence to an index's preprint record.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Executable Code Actions Elicit Better {LLM} Agents",
+          "found": "Executable Code Actions Elicit Better {LLM} Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24h.html"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Xingyao",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yangyi",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Lifan",
+              "family": "Yuan",
+              "suffix": ""
+            },
+            {
+              "given": "Yizhe",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yunzhu",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Hao",
+              "family": "Peng",
+              "suffix": ""
+            },
+            {
+              "given": "Heng",
+              "family": "Ji",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Xingyao",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yangyi",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Lifan",
+              "family": "Yuan",
+              "suffix": ""
+            },
+            {
+              "given": "Yizhe",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yunzhu",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Hao",
+              "family": "Peng",
+              "suffix": ""
+            },
+            {
+              "given": "Heng",
+              "family": "Ji",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24h.html"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24h.html"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wangVoyagerOpenEndedEmbodied2023",
+      "entry_sha256": "cd6045e65598d07ce0a153431f9af7e4efbe265eb4c784152791831abd1bcdd9",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The coauthor's laboratory lists Voyager with the same eight authors in TMLR, March 2024. Its 2023 arXiv posting is a different publication date.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Voyager: An Open-Ended Embodied Agent with Large Language Models"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://rpl.cs.utexas.edu/publications/",
+          "supports": "The coauthor's laboratory lists Voyager with the same eight authors in TMLR, March 2024. Its 2023 arXiv posting is a different publication date.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2305.16291",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Voyager: An Open-Ended Embodied Agent with Large Language Models",
+          "found": "Voyager: An Open-Ended Embodied Agent with Large Language Models",
+          "result": "match",
+          "evidence_urls": [
+            "https://rpl.cs.utexas.edu/publications/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Guanzhi",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yuqi",
+              "family": "Xie",
+              "suffix": ""
+            },
+            {
+              "given": "Yunfan",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Ajay",
+              "family": "Mandlekar",
+              "suffix": ""
+            },
+            {
+              "given": "Chaowei",
+              "family": "Xiao",
+              "suffix": ""
+            },
+            {
+              "given": "Yuke",
+              "family": "Zhu",
+              "suffix": ""
+            },
+            {
+              "given": "Linxi",
+              "family": "Fan",
+              "suffix": ""
+            },
+            {
+              "given": "Anima",
+              "family": "Anandkumar",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Guanzhi",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yuqi",
+              "family": "Xie",
+              "suffix": ""
+            },
+            {
+              "given": "Yunfan",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Ajay",
+              "family": "Mandlekar",
+              "suffix": ""
+            },
+            {
+              "given": "Chaowei",
+              "family": "Xiao",
+              "suffix": ""
+            },
+            {
+              "given": "Yuke",
+              "family": "Zhu",
+              "suffix": ""
+            },
+            {
+              "given": "Linxi",
+              "family": "Fan",
+              "suffix": ""
+            },
+            {
+              "given": "Anima",
+              "family": "Anandkumar",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://rpl.cs.utexas.edu/publications/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://rpl.cs.utexas.edu/publications/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wuOSCopilotGeneralistComputer2024",
+      "entry_sha256": "d78417e61bd5f4735726b01d5404a39b3ca50bedb371a4f58d394e4dc9eac7f9",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The project announces acceptance at the LLM Agents Workshop at ICLR 2024. The arXiv record corroborates title and author order.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "OS-Copilot: Towards Generalist Computer Agents with Self-Improvement"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://github.com/OS-Copilot/OS-Copilot",
+          "supports": "The project announces acceptance at the LLM Agents Workshop at ICLR 2024. The arXiv record corroborates title and author order.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2402.07456",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{OS-Copilot}: Towards Generalist Computer Agents with Self-Improvement",
+          "found": "{OS-Copilot}: Towards Generalist Computer Agents with Self-Improvement",
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/OS-Copilot/OS-Copilot"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zhiyong",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Chengcheng",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Zichen",
+              "family": "Ding",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenmin",
+              "family": "Weng",
+              "suffix": ""
+            },
+            {
+              "given": "Zhoumianze",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Shunyu",
+              "family": "Yao",
+              "suffix": ""
+            },
+            {
+              "given": "Tao",
+              "family": "Yu",
+              "suffix": ""
+            },
+            {
+              "given": "Lingpeng",
+              "family": "Kong",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zhiyong",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Chengcheng",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Zichen",
+              "family": "Ding",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenmin",
+              "family": "Weng",
+              "suffix": ""
+            },
+            {
+              "given": "Zhoumianze",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Shunyu",
+              "family": "Yao",
+              "suffix": ""
+            },
+            {
+              "given": "Tao",
+              "family": "Yu",
+              "suffix": ""
+            },
+            {
+              "given": "Lingpeng",
+              "family": "Kong",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/OS-Copilot/OS-Copilot"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://github.com/OS-Copilot/OS-Copilot"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zhangYouOnlyLook2024",
+      "entry_sha256": "19a96d77def7d9cc966034a7a02fb07f5b2d2f7ca70625e7bf2e0805265c254f",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The matching title and two authors have a 7 June 2024 revision (v4), supporting the input's June 2024 date. The arXiv DOI and the ACL proceedings DOI refer to different manifestations; do not replace one solely because an API returned the other. Pin v4 to make the date explicit.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "You Only Look at Screens: Multimodal Chain-of-Action Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2309.11436",
+          "supports": "The matching title and two authors have a 7 June 2024 revision (v4), supporting the input's June 2024 date. The arXiv DOI and the ACL proceedings DOI refer to different manifestations; do not replace one solely because an API returned the other. Pin v4 to make the date explicit.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "You Only Look at Screens: Multimodal Chain-of-Action Agents",
+          "found": "You Only Look at Screens: Multimodal Chain-of-Action Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2309.11436"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zhuosheng",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Aston",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zhuosheng",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Aston",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2309.11436"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2309.11436"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zheng2025skillweaverwebagentsselfimprove",
+      "entry_sha256": "bcc53dae6b014d253c0093daa90a94ed3bef4f1a77c37d171b470a15c7042772",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, eleven ordered authors and April 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "SkillWeaver: Web Agents can Self-Improve by Discovering and Honing Skills"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2504.07079",
+          "supports": "The arXiv record confirms title, eleven ordered authors and April 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{SkillWeaver}: {Web} {Agents} can {Self}-{Improve} by {Discovering} and {Honing} {Skills}",
+          "found": "{SkillWeaver}: {Web} {Agents} can {Self}-{Improve} by {Discovering} and {Honing} {Skills}",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.07079"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Boyuan",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Michael Y.",
+              "family": "Fatemi",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaolong",
+              "family": "Jin",
+              "suffix": ""
+            },
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Apurva",
+              "family": "Gandhi",
+              "suffix": ""
+            },
+            {
+              "given": "Yueqi",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Jayanth",
+              "family": "Srinivasa",
+              "suffix": ""
+            },
+            {
+              "given": "Gaowen",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Su",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Boyuan",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Michael Y.",
+              "family": "Fatemi",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaolong",
+              "family": "Jin",
+              "suffix": ""
+            },
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Apurva",
+              "family": "Gandhi",
+              "suffix": ""
+            },
+            {
+              "given": "Yueqi",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Gu",
+              "suffix": ""
+            },
+            {
+              "given": "Jayanth",
+              "family": "Srinivasa",
+              "suffix": ""
+            },
+            {
+              "given": "Gaowen",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Su",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.07079"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.07079"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zhengSynapseTrajectoryasExemplarPrompting2023a",
+      "entry_sha256": "40ec8453871efd0c6356b3f308e75b34f53d9ef6b2cb6948ab5f9c31f5c756ef",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The published ICLR 2024 paper confirms the title and four ordered authors. The earlier arXiv date is not the conference year.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Synapse: Trajectory-as-Exemplar Prompting with Memory for Computer Control"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://openreview.net/pdf?id=Pc8AU1aF5e",
+          "supports": "The published ICLR 2024 paper confirms the title and four ordered authors. The earlier arXiv date is not the conference year.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://github.com/ltzheng/Synapse",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{Synapse}: Trajectory-as-Exemplar Prompting with Memory for Computer Control",
+          "found": "{Synapse}: Trajectory-as-Exemplar Prompting with Memory for Computer Control",
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=Pc8AU1aF5e"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Longtao",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Rundong",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Xinrun",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Bo",
+              "family": "An",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Longtao",
+              "family": "Zheng",
+              "suffix": ""
+            },
+            {
+              "given": "Rundong",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Xinrun",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Bo",
+              "family": "An",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=Pc8AU1aF5e"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=Pc8AU1aF5e"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zhongMemoryBankEnhancingLarge2024",
+      "entry_sha256": "f6a980bddb56e12370659a7f0a9eadcac2f677f9d35d7e2fa64062360aacaf2e",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The AAAI-24 paper confirms title and five ordered authors. Cite the 2024 proceedings version rather than changing the year to the 2023 preprint year.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "MemoryBank: Enhancing Large Language Models with Long-Term Memory"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://ojs.aaai.org/index.php/AAAI/article/download/29946/31654",
+          "supports": "The AAAI-24 paper confirms title and five ordered authors. Cite the 2024 proceedings version rather than changing the year to the 2023 preprint year.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{MemoryBank}: Enhancing Large Language Models with Long-Term Memory",
+          "found": "{MemoryBank}: Enhancing Large Language Models with Long-Term Memory",
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/download/29946/31654"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Wanjun",
+              "family": "Zhong",
+              "suffix": ""
+            },
+            {
+              "given": "Lianghong",
+              "family": "Guo",
+              "suffix": ""
+            },
+            {
+              "given": "Qiqi",
+              "family": "Gao",
+              "suffix": ""
+            },
+            {
+              "given": "He",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Yanlin",
+              "family": "Wang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Wanjun",
+              "family": "Zhong",
+              "suffix": ""
+            },
+            {
+              "given": "Lianghong",
+              "family": "Guo",
+              "suffix": ""
+            },
+            {
+              "given": "Qiqi",
+              "family": "Gao",
+              "suffix": ""
+            },
+            {
+              "given": "He",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Yanlin",
+              "family": "Wang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/download/29946/31654"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/download/29946/31654"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "you2025datawiseagentnotebookcentricllmagent",
+      "entry_sha256": "4b5cdbaeeb9562858d29b8228e16b76a4dfd9547de4c3dd182f036938cea7da4",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Needs review",
+      "summary": "The cited arXiv record matches the input, including Huaming Zhang. The EMNLP paper instead prints Huamin Zhang. Resolve this spelling with the intended version; do not silently treat one as a confirmed correction.",
+      "checked_fields": [
+        "title",
+        "authors (version conflict)",
+        "year"
+      ],
+      "search_queries": [
+        "DatawiseAgent: A Notebook-Centric LLM Agent Framework for Adaptive and Robust Data Science Automation"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2503.07044",
+          "supports": "The cited arXiv record matches the input, including Huaming Zhang. The EMNLP paper instead prints Huamin Zhang. Resolve this spelling with the intended version; do not silently treat one as a confirmed correction.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://aclanthology.org/2025.emnlp-main.58.pdf",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Ziming",
+              "family": "You",
+              "suffix": ""
+            },
+            {
+              "given": "Yumiao",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Dexuan",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Yiwei",
+              "family": "Lou",
+              "suffix": ""
+            },
+            {
+              "given": "Yandong",
+              "family": "Yan",
+              "suffix": ""
+            },
+            {
+              "given": "Wei",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Huaming",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yu",
+              "family": "Huang",
+              "suffix": ""
+            }
+          ],
+          "found": "arXiv: Huaming Zhang; EMNLP paper: Huamin Zhang",
+          "result": "unknown",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2503.07044",
+            "https://aclanthology.org/2025.emnlp-main.58.pdf"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "elhashemy2025bridgingprototypeproductiongapmultiagent",
+      "entry_sha256": "62c2d288ae1513ae2f25bb71a3768e8c5661c7e776dd58ef3258cae2fbc7c6be",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms the exact title, Elhashemy/Lotfy/Tang and November 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Bridging the Prototype-Production Gap: A Multi-Agent System for Notebooks Transformation"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2511.07257",
+          "supports": "The arXiv record confirms the exact title, Elhashemy/Lotfy/Tang and November 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Bridging the Prototype-Production Gap: A Multi-Agent System for Notebooks Transformation",
+          "found": "Bridging the Prototype-Production Gap: A Multi-Agent System for Notebooks Transformation",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.07257"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Hanya",
+              "family": "Elhashemy",
+              "suffix": ""
+            },
+            {
+              "given": "Youssef",
+              "family": "Lotfy",
+              "suffix": ""
+            },
+            {
+              "given": "Yongjian",
+              "family": "Tang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Hanya",
+              "family": "Elhashemy",
+              "suffix": ""
+            },
+            {
+              "given": "Youssef",
+              "family": "Lotfy",
+              "suffix": ""
+            },
+            {
+              "given": "Yongjian",
+              "family": "Tang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.07257"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.07257"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "tao-etal-2025-treerag",
+      "entry_sha256": "65395434d90bf400c7d09b946a4041647c6dd7dd697608a40002f18cd0193fb6",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ACL confirms the five ordered authors, title, Findings ACL 2025, pages 356–371 and DOI.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "TreeRAG: Unleashing the Power of Hierarchical Storage for Enhanced Knowledge Retrieval in Long Documents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://aclanthology.org/2025.findings-acl.20/",
+          "supports": "ACL confirms the five ordered authors, title, Findings ACL 2025, pages 356–371 and DOI.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "TreeRAG: Unleashing the Power of Hierarchical Storage for Enhanced Knowledge Retrieval in Long Documents",
+          "found": "TreeRAG: Unleashing the Power of Hierarchical Storage for Enhanced Knowledge Retrieval in Long Documents",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.findings-acl.20/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Wenyu",
+              "family": "Tao",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaofen",
+              "family": "Xing",
+              "suffix": ""
+            },
+            {
+              "given": "Yirong",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Linyi",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiangmin",
+              "family": "Xu",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Wenyu",
+              "family": "Tao",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaofen",
+              "family": "Xing",
+              "suffix": ""
+            },
+            {
+              "given": "Yirong",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Linyi",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiangmin",
+              "family": "Xu",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.findings-acl.20/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.findings-acl.20/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "vectifyaiPageIndex2025",
+      "entry_sha256": "97002bc585ca6d7500017d7dd1dd829e786e8c992734f1b908db85f77fa1f0bd",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Needs review",
+      "summary": "The owner repository confirms PageIndex and the vectorless reasoning-based RAG project. The live README has changed; the citation's 2025 year is not tied to a verified tag or commit. Add a dated release/commit and access date before calling the software citation fully verified.",
+      "checked_fields": [
+        "title",
+        "repository identity"
+      ],
+      "search_queries": [
+        "PageIndex: Document Index for Vectorless, Reasoning-Based RAG"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://github.com/VectifyAI/PageIndex/",
+          "supports": "The owner repository confirms PageIndex and the vectorless reasoning-based RAG project. The live README has changed; the citation's 2025 year is not tied to a verified tag or commit. Add a dated release/commit and access date before calling the software citation fully verified.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "huq-etal-2025-cowpilot",
+      "entry_sha256": "119564a30ea62dedb2f72ee6f846e77781ef4514b17de0e26c4e1da1f1b6e5ba",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ACL confirms the seven ordered authors, title, NAACL 2025 system demonstrations, pages 163–172 and DOI.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "CowPilot: A Framework for Autonomous and Human-Agent Collaborative Web Navigation"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://aclanthology.org/2025.naacl-demo.17/",
+          "supports": "ACL confirms the seven ordered authors, title, NAACL 2025 system demonstrations, pages 163–172 and DOI.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "CowPilot: A Framework for Autonomous and Human-Agent Collaborative Web Navigation",
+          "found": "CowPilot: A Framework for Autonomous and Human-Agent Collaborative Web Navigation",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.naacl-demo.17/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Faria",
+              "family": "Huq",
+              "suffix": ""
+            },
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Frank F.",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyue",
+              "family": "Ou",
+              "suffix": ""
+            },
+            {
+              "given": "Shuyan",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Jeffrey P.",
+              "family": "Bigham",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Faria",
+              "family": "Huq",
+              "suffix": ""
+            },
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Frank F.",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyue",
+              "family": "Ou",
+              "suffix": ""
+            },
+            {
+              "given": "Shuyan",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Jeffrey P.",
+              "family": "Bigham",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.naacl-demo.17/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.naacl-demo.17/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "reuseit2025",
+      "entry_sha256": "94214fa10204ec582248dfdf8b3a5f1431983ffe9c94d59c0a5523c5b865902c",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms the title, Liu/Sra/Inala/Wang and October 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "ReUseIt: Synthesizing Reusable AI Agent Workflows for Web Automation"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2510.14308",
+          "supports": "The arXiv record confirms the title, Liu/Sra/Inala/Wang and October 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ReUseIt}: Synthesizing Reusable AI Agent Workflows for Web Automation",
+          "found": "{ReUseIt}: Synthesizing Reusable AI Agent Workflows for Web Automation",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2510.14308"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Yimeng",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Misha",
+              "family": "Sra",
+              "suffix": ""
+            },
+            {
+              "given": "Jeevana Priya",
+              "family": "Inala",
+              "suffix": ""
+            },
+            {
+              "given": "Chenglong",
+              "family": "Wang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Yimeng",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Misha",
+              "family": "Sra",
+              "suffix": ""
+            },
+            {
+              "given": "Jeevana Priya",
+              "family": "Inala",
+              "suffix": ""
+            },
+            {
+              "given": "Chenglong",
+              "family": "Wang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2510.14308"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2510.14308"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "alas2025",
+      "entry_sha256": "00ef75e1d81843c02c14985661f61abe228490364603061d3bbcb171e5e6e73c",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms the title, Longling Geng and Edward Y. Chang, and November 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "ALAS: Transactional and Dynamic Multi-Agent LLM Planning"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2511.03094",
+          "supports": "The arXiv record confirms the title, Longling Geng and Edward Y. Chang, and November 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ALAS}: Transactional and Dynamic Multi-Agent LLM Planning",
+          "found": "{ALAS}: Transactional and Dynamic Multi-Agent LLM Planning",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.03094"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Longling",
+              "family": "Geng",
+              "suffix": ""
+            },
+            {
+              "given": "Edward Y",
+              "family": "Chang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Longling",
+              "family": "Geng",
+              "suffix": ""
+            },
+            {
+              "given": "Edward Y",
+              "family": "Chang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.03094"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.03094"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "agentgit2025",
+      "entry_sha256": "6b0de0af26d4dec34eaf308d1d819f38a55c4c8b007b834e6c6ab75eaac5c7ca",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, seven ordered authors and November 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "AgentGit: A Version Control Framework for Reliable and Scalable LLM-Powered Multi-Agent Systems"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2511.00628",
+          "supports": "The arXiv record confirms title, seven ordered authors and November 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{AgentGit}: A Version Control Framework for Reliable and Scalable LLM-Powered Multi-Agent Systems",
+          "found": "{AgentGit}: A Version Control Framework for Reliable and Scalable LLM-Powered Multi-Agent Systems",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.00628"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Yang",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Siqi",
+              "family": "Ping",
+              "suffix": ""
+            },
+            {
+              "given": "Xiyu",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaojian",
+              "family": "Qi",
+              "suffix": ""
+            },
+            {
+              "given": "Zigan",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Ye",
+              "family": "Luo",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaowei",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Yang",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Siqi",
+              "family": "Ping",
+              "suffix": ""
+            },
+            {
+              "given": "Xiyu",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaojian",
+              "family": "Qi",
+              "suffix": ""
+            },
+            {
+              "given": "Zigan",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Ye",
+              "family": "Luo",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaowei",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.00628"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2511.00628"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "agentbay2025",
+      "entry_sha256": "ef8d6b0db354c1e80b1644714390eb65446e7634496e15590e92e3d31a8e3adb",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Partial match",
+      "summary": "The ten named authors match the beginning of the 31-author arXiv record; the input then uses others. Title and December 2025 submission agree. This is intentional truncation, not a complete author-list match.",
+      "checked_fields": [
+        "title",
+        "author prefix",
+        "year"
+      ],
+      "search_queries": [
+        "AgentBay: A Hybrid Interaction Sandbox for Seamless Human-AI Intervention in Agentic Systems"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2512.04367",
+          "supports": "The ten named authors match the beginning of the 31-author arXiv record; the input then uses others. Title and December 2025 submission agree. This is intentional truncation, not a complete author-list match.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "AgentBay: A Hybrid Interaction Sandbox for Seamless Human-AI Intervention in Agentic Systems",
+          "found": "AgentBay: A Hybrid Interaction Sandbox for Seamless Human-AI Intervention in Agentic Systems",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2512.04367"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Yun",
+              "family": "Piao",
+              "suffix": ""
+            },
+            {
+              "given": "Hongbo",
+              "family": "Min",
+              "suffix": ""
+            },
+            {
+              "given": "Hang",
+              "family": "Su",
+              "suffix": ""
+            },
+            {
+              "given": "Leilei",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Lei",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Yue",
+              "family": "Yin",
+              "suffix": ""
+            },
+            {
+              "given": "Xiao",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhejing",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Liwei",
+              "family": "Qu",
+              "suffix": ""
+            },
+            {
+              "given": "Hang",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "",
+              "family": "others",
+              "suffix": ""
+            }
+          ],
+          "found": "Matching ordered prefix; the primary record lists additional authors. See Agent evidence.",
+          "result": "partial_match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2512.04367"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2512.04367"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "atomix2026",
+      "entry_sha256": "f48983c71bcd4d912f9433f0ae0103a37e8eccd9fbd3099356ae8fd468c727d8",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, five ordered authors and February 2026 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Atomix: Timely, Transactional Tool Use for Reliable Agentic Workflows"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2602.14849",
+          "supports": "The arXiv record confirms title, five ordered authors and February 2026 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Atomix: Timely, Transactional Tool Use for Reliable Agentic Workflows",
+          "found": "Atomix: Timely, Transactional Tool Use for Reliable Agentic Workflows",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2602.14849"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Bardia",
+              "family": "Mohammadi",
+              "suffix": ""
+            },
+            {
+              "given": "Nearchos",
+              "family": "Potamitis",
+              "suffix": ""
+            },
+            {
+              "given": "Lars",
+              "family": "Klein",
+              "suffix": ""
+            },
+            {
+              "given": "Akhil",
+              "family": "Arora",
+              "suffix": ""
+            },
+            {
+              "given": "Laurent",
+              "family": "Bindschaedler",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Bardia",
+              "family": "Mohammadi",
+              "suffix": ""
+            },
+            {
+              "given": "Nearchos",
+              "family": "Potamitis",
+              "suffix": ""
+            },
+            {
+              "given": "Lars",
+              "family": "Klein",
+              "suffix": ""
+            },
+            {
+              "given": "Akhil",
+              "family": "Arora",
+              "suffix": ""
+            },
+            {
+              "given": "Laurent",
+              "family": "Bindschaedler",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2602.14849"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2026",
+          "found": "2026",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2602.14849"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "elhattami2025webarenaverified",
+      "entry_sha256": "56c7f1ddef2447bd2f70f79861b017df2f7a55801218c3373c2711db1b29b126",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The maintainer-published package citation confirms title, four ordered authors, Workshop on Scaling Environments for Agents, 2025 and the same OpenReview identifier. OpenReview itself was rate-limited during this check.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "WebArena Verified: Reliable Evaluation for Web Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://pypi.org/project/webarena-verified/",
+          "supports": "The maintainer-published package citation confirms title, four ordered authors, Workshop on Scaling Environments for Agents, 2025 and the same OpenReview identifier. OpenReview itself was rate-limited during this check.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://github.com/ServiceNow/webarena-verified",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{WebArena Verified}: Reliable Evaluation for Web Agents",
+          "found": "{WebArena Verified}: Reliable Evaluation for Web Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://pypi.org/project/webarena-verified/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Amine",
+              "family": "El hattami",
+              "suffix": ""
+            },
+            {
+              "given": "Megh",
+              "family": "Thakkar",
+              "suffix": ""
+            },
+            {
+              "given": "Nicolas",
+              "family": "Chapados",
+              "suffix": ""
+            },
+            {
+              "given": "Christopher",
+              "family": "Pal",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Amine",
+              "family": "El hattami",
+              "suffix": ""
+            },
+            {
+              "given": "Megh",
+              "family": "Thakkar",
+              "suffix": ""
+            },
+            {
+              "given": "Nicolas",
+              "family": "Chapados",
+              "suffix": ""
+            },
+            {
+              "given": "Christopher",
+              "family": "Pal",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://pypi.org/project/webarena-verified/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://pypi.org/project/webarena-verified/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wang2024agentworkflowmemory",
+      "entry_sha256": "ea53b6b30c8f15dfe48cea5f6baeaaaa30f322bdf101ff7c7e36bc2147f27c09",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "PMLR confirms Wang/Mao/Fried/Neubig, ICML 2025 and pages 63897–63911. The 2024 citation key and preprint do not invalidate the proceedings year.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Agent Workflow Memory"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://proceedings.mlr.press/v267/wang25bx.html",
+          "supports": "PMLR confirms Wang/Mao/Fried/Neubig, ICML 2025 and pages 63897–63911. The 2024 citation key and preprint do not invalidate the proceedings year.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Agent Workflow Memory",
+          "found": "Agent Workflow Memory",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v267/wang25bx.html"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayuan",
+              "family": "Mao",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Fried",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zora Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayuan",
+              "family": "Mao",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Fried",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v267/wang25bx.html"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v267/wang25bx.html"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "ouyang2025reasoningbank",
+      "entry_sha256": "107a85838081c2a0f253495be32fda8c2a0fa089624ec7584c74459f3d8eccf3",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, all seventeen ordered authors and September 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "ReasoningBank: Scaling Agent Self-Evolving with Reasoning Memory"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2509.25140",
+          "supports": "The arXiv record confirms title, all seventeen ordered authors and September 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ReasoningBank}: Scaling Agent Self-Evolving with Reasoning Memory",
+          "found": "{ReasoningBank}: Scaling Agent Self-Evolving with Reasoning Memory",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2509.25140"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Siru",
+              "family": "Ouyang",
+              "suffix": ""
+            },
+            {
+              "given": "Jun",
+              "family": "Yan",
+              "suffix": ""
+            },
+            {
+              "given": "I-Hung",
+              "family": "Hsu",
+              "suffix": ""
+            },
+            {
+              "given": "Yanfei",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Ke",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Zifeng",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Rujun",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Long T.",
+              "family": "Le",
+              "suffix": ""
+            },
+            {
+              "given": "Samira",
+              "family": "Daruki",
+              "suffix": ""
+            },
+            {
+              "given": "Xiangru",
+              "family": "Tang",
+              "suffix": ""
+            },
+            {
+              "given": "Vishy",
+              "family": "Tirumalashetty",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Mahsan",
+              "family": "Rofouei",
+              "suffix": ""
+            },
+            {
+              "given": "Hangfei",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Jiawei",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Chen-Yu",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Tomas",
+              "family": "Pfister",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Siru",
+              "family": "Ouyang",
+              "suffix": ""
+            },
+            {
+              "given": "Jun",
+              "family": "Yan",
+              "suffix": ""
+            },
+            {
+              "given": "I-Hung",
+              "family": "Hsu",
+              "suffix": ""
+            },
+            {
+              "given": "Yanfei",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Ke",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Zifeng",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Rujun",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Long T.",
+              "family": "Le",
+              "suffix": ""
+            },
+            {
+              "given": "Samira",
+              "family": "Daruki",
+              "suffix": ""
+            },
+            {
+              "given": "Xiangru",
+              "family": "Tang",
+              "suffix": ""
+            },
+            {
+              "given": "Vishy",
+              "family": "Tirumalashetty",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Mahsan",
+              "family": "Rofouei",
+              "suffix": ""
+            },
+            {
+              "given": "Hangfei",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Jiawei",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Chen-Yu",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Tomas",
+              "family": "Pfister",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2509.25140"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2509.25140"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zhang2024memorymechanism",
+      "entry_sha256": "3021bb9b28073faa16292cada786e203f04b655433eaf9e98a53441d0dc6b020",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, nine ordered authors and April 2024 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "A Survey on the Memory Mechanism of Large Language Model based Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2404.13501",
+          "supports": "The arXiv record confirms title, nine ordered authors and April 2024 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "A Survey on the Memory Mechanism of Large Language Model based Agents",
+          "found": "A Survey on the Memory Mechanism of Large Language Model based Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2404.13501"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zeyu",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaohe",
+              "family": "Bo",
+              "suffix": ""
+            },
+            {
+              "given": "Chen",
+              "family": "Ma",
+              "suffix": ""
+            },
+            {
+              "given": "Rui",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Xu",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Quanyu",
+              "family": "Dai",
+              "suffix": ""
+            },
+            {
+              "given": "Jieming",
+              "family": "Zhu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenhua",
+              "family": "Dong",
+              "suffix": ""
+            },
+            {
+              "given": "Ji-Rong",
+              "family": "Wen",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zeyu",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaohe",
+              "family": "Bo",
+              "suffix": ""
+            },
+            {
+              "given": "Chen",
+              "family": "Ma",
+              "suffix": ""
+            },
+            {
+              "given": "Rui",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Xu",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Quanyu",
+              "family": "Dai",
+              "suffix": ""
+            },
+            {
+              "given": "Jieming",
+              "family": "Zhu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenhua",
+              "family": "Dong",
+              "suffix": ""
+            },
+            {
+              "given": "Ji-Rong",
+              "family": "Wen",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2404.13501"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2404.13501"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "packer2023memgpt",
+      "entry_sha256": "d2297d0425f14b1c68e1c284383c09fb27521a04b0dabf11b654f20981202a3c",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, seven ordered authors and October 2023 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "MemGPT: Towards LLMs as Operating Systems"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2310.08560",
+          "supports": "The arXiv record confirms title, seven ordered authors and October 2023 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{MemGPT}: Towards {LLMs} as Operating Systems",
+          "found": "{MemGPT}: Towards {LLMs} as Operating Systems",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.08560"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Charles",
+              "family": "Packer",
+              "suffix": ""
+            },
+            {
+              "given": "Sarah",
+              "family": "Wooders",
+              "suffix": ""
+            },
+            {
+              "given": "Kevin",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Vivian",
+              "family": "Fang",
+              "suffix": ""
+            },
+            {
+              "given": "Shishir G.",
+              "family": "Patil",
+              "suffix": ""
+            },
+            {
+              "given": "Ion",
+              "family": "Stoica",
+              "suffix": ""
+            },
+            {
+              "given": "Joseph E.",
+              "family": "Gonzalez",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Charles",
+              "family": "Packer",
+              "suffix": ""
+            },
+            {
+              "given": "Sarah",
+              "family": "Wooders",
+              "suffix": ""
+            },
+            {
+              "given": "Kevin",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Vivian",
+              "family": "Fang",
+              "suffix": ""
+            },
+            {
+              "given": "Shishir G.",
+              "family": "Patil",
+              "suffix": ""
+            },
+            {
+              "given": "Ion",
+              "family": "Stoica",
+              "suffix": ""
+            },
+            {
+              "given": "Joseph E.",
+              "family": "Gonzalez",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.08560"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2023",
+          "found": "2023",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.08560"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "chhikara2025mem0",
+      "entry_sha256": "04b8a0e434f9f8f9dafe9d1a88427e3e07b8e0472305c7a72613c71470c0e54a",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, five ordered authors and April 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2504.19413",
+          "supports": "The arXiv record confirms title, five ordered authors and April 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{Mem0}: Building Production-Ready {AI} Agents with Scalable Long-Term Memory",
+          "found": "{Mem0}: Building Production-Ready {AI} Agents with Scalable Long-Term Memory",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.19413"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Prateek",
+              "family": "Chhikara",
+              "suffix": ""
+            },
+            {
+              "given": "Dev",
+              "family": "Khant",
+              "suffix": ""
+            },
+            {
+              "given": "Saket",
+              "family": "Aryan",
+              "suffix": ""
+            },
+            {
+              "given": "Taranjeet",
+              "family": "Singh",
+              "suffix": ""
+            },
+            {
+              "given": "Deshraj",
+              "family": "Yadav",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Prateek",
+              "family": "Chhikara",
+              "suffix": ""
+            },
+            {
+              "given": "Dev",
+              "family": "Khant",
+              "suffix": ""
+            },
+            {
+              "given": "Saket",
+              "family": "Aryan",
+              "suffix": ""
+            },
+            {
+              "given": "Taranjeet",
+              "family": "Singh",
+              "suffix": ""
+            },
+            {
+              "given": "Deshraj",
+              "family": "Yadav",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.19413"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2504.19413"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "xu2025agenticmem",
+      "entry_sha256": "d9bf9349ea0b8c2f5362c2cc7c714a7b865526fcadf0f4c35154bc21ca18bc43",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, six ordered authors and February 2025 submission. Later proceedings availability does not make this preprint citation incorrect.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "A-MEM: Agentic Memory for LLM Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2502.12110",
+          "supports": "The arXiv record confirms title, six ordered authors and February 2025 submission. Later proceedings availability does not make this preprint citation incorrect.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{A-MEM}: Agentic Memory for {LLM} Agents",
+          "found": "{A-MEM}: Agentic Memory for {LLM} Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2502.12110"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Wujiang",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Zujie",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Kai",
+              "family": "Mei",
+              "suffix": ""
+            },
+            {
+              "given": "Hang",
+              "family": "Gao",
+              "suffix": ""
+            },
+            {
+              "given": "Juntao",
+              "family": "Tan",
+              "suffix": ""
+            },
+            {
+              "given": "Yongfeng",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Wujiang",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Zujie",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Kai",
+              "family": "Mei",
+              "suffix": ""
+            },
+            {
+              "given": "Hang",
+              "family": "Gao",
+              "suffix": ""
+            },
+            {
+              "given": "Juntao",
+              "family": "Tan",
+              "suffix": ""
+            },
+            {
+              "given": "Yongfeng",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2502.12110"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2502.12110"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "hu2025hiagent",
+      "entry_sha256": "6822801dd7854ab64c9a483f303c6e6f7e5a00cf13a6e43bca1a2b642f0405c7",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ACL confirms title, six ordered authors and ACL 2025, pages 32779–32798. The 2024 preprint date is not the proceedings date.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "HiAgent: Hierarchical Working Memory Management for Solving Long-Horizon Agent Tasks with Large Language Model"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://aclanthology.org/2025.acl-long.1575/",
+          "supports": "ACL confirms title, six ordered authors and ACL 2025, pages 32779–32798. The 2024 preprint date is not the proceedings date.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{HiAgent}: Hierarchical Working Memory Management for Solving Long-Horizon Agent Tasks with Large Language Model",
+          "found": "{HiAgent}: Hierarchical Working Memory Management for Solving Long-Horizon Agent Tasks with Large Language Model",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.1575/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Mengkang",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Tianxing",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Qiguang",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Yao",
+              "family": "Mu",
+              "suffix": ""
+            },
+            {
+              "given": "Wenqi",
+              "family": "Shao",
+              "suffix": ""
+            },
+            {
+              "given": "Ping",
+              "family": "Luo",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Mengkang",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Tianxing",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Qiguang",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Yao",
+              "family": "Mu",
+              "suffix": ""
+            },
+            {
+              "given": "Wenqi",
+              "family": "Shao",
+              "suffix": ""
+            },
+            {
+              "given": "Ping",
+              "family": "Luo",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.1575/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.1575/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "tan2025reflectivememory",
+      "entry_sha256": "09e8701f9696546deaf779c82ce7295465b1671e39bc516d0b4e9fd4a6ec59c1",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ACL confirms title and all fifteen ordered author names, including Long Le and Anand Rajan Iyer, plus 2025 and pages 8416–8439. The preprint uses different name forms.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://aclanthology.org/2025.acl-long.413/",
+          "supports": "ACL confirms title and all fifteen ordered author names, including Long Le and Anand Rajan Iyer, plus 2025 and pages 8416–8439. The preprint uses different name forms.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents",
+          "found": "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.413/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zhen",
+              "family": "Tan",
+              "suffix": ""
+            },
+            {
+              "given": "Jun",
+              "family": "Yan",
+              "suffix": ""
+            },
+            {
+              "given": "I-Hung",
+              "family": "Hsu",
+              "suffix": ""
+            },
+            {
+              "given": "Rujun",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Zifeng",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Long",
+              "family": "Le",
+              "suffix": ""
+            },
+            {
+              "given": "Yiwen",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Yanfei",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Hamid",
+              "family": "Palangi",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Anand Rajan",
+              "family": "Iyer",
+              "suffix": ""
+            },
+            {
+              "given": "Tianlong",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Huan",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Chen-Yu",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Tomas",
+              "family": "Pfister",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zhen",
+              "family": "Tan",
+              "suffix": ""
+            },
+            {
+              "given": "Jun",
+              "family": "Yan",
+              "suffix": ""
+            },
+            {
+              "given": "I-Hung",
+              "family": "Hsu",
+              "suffix": ""
+            },
+            {
+              "given": "Rujun",
+              "family": "Han",
+              "suffix": ""
+            },
+            {
+              "given": "Zifeng",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Long",
+              "family": "Le",
+              "suffix": ""
+            },
+            {
+              "given": "Yiwen",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Yanfei",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Hamid",
+              "family": "Palangi",
+              "suffix": ""
+            },
+            {
+              "given": "George",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Anand Rajan",
+              "family": "Iyer",
+              "suffix": ""
+            },
+            {
+              "given": "Tianlong",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Huan",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Chen-Yu",
+              "family": "Lee",
+              "suffix": ""
+            },
+            {
+              "given": "Tomas",
+              "family": "Pfister",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.413/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.413/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "zhao2024expel",
+      "entry_sha256": "4d5d8ea281078b6ac15ae1cfcd0d44ffb98edc458f864f4ead7e9157d0b0ebb6",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "AAAI confirms the six ordered authors, title, 2024 proceedings and DOI. The preprint's 2023 date should not replace the proceedings year.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "ExpeL: LLM Agents Are Experiential Learners"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://ojs.aaai.org/index.php/AAAI/article/view/29936",
+          "supports": "AAAI confirms the six ordered authors, title, 2024 proceedings and DOI. The preprint's 2023 date should not replace the proceedings year.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ExpeL}: {LLM} Agents Are Experiential Learners",
+          "found": "{ExpeL}: {LLM} Agents Are Experiential Learners",
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/view/29936"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Andrew",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Quentin",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Matthieu",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Yong-Jin",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Gao",
+              "family": "Huang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Andrew",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Quentin",
+              "family": "Xu",
+              "suffix": ""
+            },
+            {
+              "given": "Matthieu",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Yong-Jin",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Gao",
+              "family": "Huang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/view/29936"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://ojs.aaai.org/index.php/AAAI/article/view/29936"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "fang2025memp",
+      "entry_sha256": "0c0fbc20ab2a062efc141637f624f8701a5bbbb179c473d42fdd2f97bbb3be81",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms the title apart from capitalization, nine ordered authors and August 2025 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "MemP: Exploring Agent Procedural Memory"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2508.06433",
+          "supports": "The arXiv record confirms the title apart from capitalization, nine ordered authors and August 2025 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{MemP}: Exploring Agent Procedural Memory",
+          "found": "{MemP}: Exploring Agent Procedural Memory",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2508.06433"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Runnan",
+              "family": "Fang",
+              "suffix": ""
+            },
+            {
+              "given": "Yuan",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaobin",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Jialong",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Shuofei",
+              "family": "Qiao",
+              "suffix": ""
+            },
+            {
+              "given": "Pengjun",
+              "family": "Xie",
+              "suffix": ""
+            },
+            {
+              "given": "Fei",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Huajun",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Ningyu",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Runnan",
+              "family": "Fang",
+              "suffix": ""
+            },
+            {
+              "given": "Yuan",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Xiaobin",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Jialong",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Shuofei",
+              "family": "Qiao",
+              "suffix": ""
+            },
+            {
+              "given": "Pengjun",
+              "family": "Xie",
+              "suffix": ""
+            },
+            {
+              "given": "Fei",
+              "family": "Huang",
+              "suffix": ""
+            },
+            {
+              "given": "Huajun",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Ningyu",
+              "family": "Zhang",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2508.06433"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2508.06433"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "gao2025selfevolving",
+      "entry_sha256": "c5a7fa89ec626196cffff826bb30970470cdbfe6b4853513baa7dc0556f13688",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Needs review",
+      "summary": "The arXiv landing metadata matches the input author order and 2025 initial submission, but the TMLR 2026 paper moves Qihan Ren earlier in the author list. Pin the preprint version or use the journal's ordered authors if switching to TMLR.",
+      "checked_fields": [
+        "title",
+        "authors (version conflict)",
+        "year"
+      ],
+      "search_queries": [
+        "A Survey of Self-Evolving Agents: What, When, How, and Where to Evolve on the Path to Artificial Super Intelligence"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2507.21046",
+          "supports": "The arXiv landing metadata matches the input author order and 2025 initial submission, but the TMLR 2026 paper moves Qihan Ren earlier in the author list. Pin the preprint version or use the journal's ordered authors if switching to TMLR.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://openreview.net/pdf?id=CTr3bovS5F",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Huan-ang",
+              "family": "Gao",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayi",
+              "family": "Geng",
+              "suffix": ""
+            },
+            {
+              "given": "Wenyue",
+              "family": "Hua",
+              "suffix": ""
+            },
+            {
+              "given": "Mengkang",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Xinzhe",
+              "family": "Juan",
+              "suffix": ""
+            },
+            {
+              "given": "Hongzhang",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Shilong",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Jiahao",
+              "family": "Qiu",
+              "suffix": ""
+            },
+            {
+              "given": "Xuan",
+              "family": "Qi",
+              "suffix": ""
+            },
+            {
+              "given": "Yiran",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Hongru",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Han",
+              "family": "Xiao",
+              "suffix": ""
+            },
+            {
+              "given": "Yuhang",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Shaokun",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayi",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Jinyu",
+              "family": "Xiang",
+              "suffix": ""
+            },
+            {
+              "given": "Yixiong",
+              "family": "Fang",
+              "suffix": ""
+            },
+            {
+              "given": "Qiwen",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Dongrui",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Qihan",
+              "family": "Ren",
+              "suffix": ""
+            },
+            {
+              "given": "Cheng",
+              "family": "Qian",
+              "suffix": ""
+            },
+            {
+              "given": "Zhenhailong",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Minda",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Huazheng",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Qingyun",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Heng",
+              "family": "Ji",
+              "suffix": ""
+            },
+            {
+              "given": "Mengdi",
+              "family": "Wang",
+              "suffix": ""
+            }
+          ],
+          "found": "arXiv places Qihan Ren after Dongrui Liu; TMLR paper places Qihan Ren after Xuan Qi",
+          "result": "unknown",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2507.21046",
+            "https://openreview.net/pdf?id=CTr3bovS5F"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "liang2024selfevolving",
+      "entry_sha256": "312b9c90940cec84f8e53c7ba0c1fac310039107b133ce84d32f1585e804bfa3",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "Current v2 metadata matches all fourteen input authors. Search snippets for v1 show only six authors; that is a version difference, not evidence that the supplied list is invented. The preprint was first submitted in September 2024.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Self-evolving Agents with Reflective and Memory-Augmented Abilities"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2409.00872",
+          "supports": "Current v2 metadata matches all fourteen input authors. Search snippets for v1 show only six authors; that is a version difference, not evidence that the supplied list is invented. The preprint was first submitted in September 2024.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Self-evolving Agents with Reflective and Memory-Augmented Abilities",
+          "found": "Self-evolving Agents with Reflective and Memory-Augmented Abilities",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.00872"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Xuechen",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Yangfan",
+              "family": "He",
+              "suffix": ""
+            },
+            {
+              "given": "Yinghui",
+              "family": "Xia",
+              "suffix": ""
+            },
+            {
+              "given": "Xinyuan",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Jianhui",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Meiling",
+              "family": "Tao",
+              "suffix": ""
+            },
+            {
+              "given": "Li",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Xinhang",
+              "family": "Yuan",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayi",
+              "family": "Su",
+              "suffix": ""
+            },
+            {
+              "given": "Keqin",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Jiaqi",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Jinsong",
+              "family": "Yang",
+              "suffix": ""
+            },
+            {
+              "given": "Siyuan",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyu",
+              "family": "Shi",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Xuechen",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Yangfan",
+              "family": "He",
+              "suffix": ""
+            },
+            {
+              "given": "Yinghui",
+              "family": "Xia",
+              "suffix": ""
+            },
+            {
+              "given": "Xinyuan",
+              "family": "Song",
+              "suffix": ""
+            },
+            {
+              "given": "Jianhui",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Meiling",
+              "family": "Tao",
+              "suffix": ""
+            },
+            {
+              "given": "Li",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Xinhang",
+              "family": "Yuan",
+              "suffix": ""
+            },
+            {
+              "given": "Jiayi",
+              "family": "Su",
+              "suffix": ""
+            },
+            {
+              "given": "Keqin",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Jiaqi",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Jinsong",
+              "family": "Yang",
+              "suffix": ""
+            },
+            {
+              "given": "Siyuan",
+              "family": "Chen",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyu",
+              "family": "Shi",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.00872"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2409.00872"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "majumder2023clin",
+      "entry_sha256": "69c1c68cef98c4891e4668a00c7a4744eb9d896edf22a6a78f0b8b7e3c34b55b",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, eight ordered authors and October 2023 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "CLIN: A Continually Learning Language Agent for Rapid Task Adaptation and Generalization"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2310.10134",
+          "supports": "The arXiv record confirms title, eight ordered authors and October 2023 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{CLIN}: A Continually Learning Language Agent for Rapid Task Adaptation and Generalization",
+          "found": "{CLIN}: A Continually Learning Language Agent for Rapid Task Adaptation and Generalization",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.10134"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Bodhisattwa Prasad",
+              "family": "Majumder",
+              "suffix": ""
+            },
+            {
+              "given": "Bhavana Dalvi",
+              "family": "Mishra",
+              "suffix": ""
+            },
+            {
+              "given": "Peter",
+              "family": "Jansen",
+              "suffix": ""
+            },
+            {
+              "given": "Oyvind",
+              "family": "Tafjord",
+              "suffix": ""
+            },
+            {
+              "given": "Niket",
+              "family": "Tandon",
+              "suffix": ""
+            },
+            {
+              "given": "Li",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Chris",
+              "family": "Callison-Burch",
+              "suffix": ""
+            },
+            {
+              "given": "Peter",
+              "family": "Clark",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Bodhisattwa Prasad",
+              "family": "Majumder",
+              "suffix": ""
+            },
+            {
+              "given": "Bhavana Dalvi",
+              "family": "Mishra",
+              "suffix": ""
+            },
+            {
+              "given": "Peter",
+              "family": "Jansen",
+              "suffix": ""
+            },
+            {
+              "given": "Oyvind",
+              "family": "Tafjord",
+              "suffix": ""
+            },
+            {
+              "given": "Niket",
+              "family": "Tandon",
+              "suffix": ""
+            },
+            {
+              "given": "Li",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Chris",
+              "family": "Callison-Burch",
+              "suffix": ""
+            },
+            {
+              "given": "Peter",
+              "family": "Clark",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.10134"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2023",
+          "found": "2023",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2310.10134"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "su2025learnbyinteract",
+      "entry_sha256": "7559d4e08771166c48ac3a0a0c903198a80047068005e5f179ed9f24e9fa46d8",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ICLR confirms the title, six-author order and 2025 venue. Sercan Arik, Sercan O. Arik and Sercan Ö. Arık are name variants across these primary records, not different people.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Learn-by-Interact: A Data-Centric Framework For Self-Adaptive Agents in Realistic Environments"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/dd745a0c4f91fe91866fe6788be9cc28-Abstract-Conference.html",
+          "supports": "ICLR confirms the title, six-author order and 2025 venue. Sercan Arik, Sercan O. Arik and Sercan Ö. Arık are name variants across these primary records, not different people.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2501.10893",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Learn-by-Interact: A Data-Centric Framework For Self-Adaptive Agents in Realistic Environments",
+          "found": "Learn-by-Interact: A Data-Centric Framework For Self-Adaptive Agents in Realistic Environments",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.iclr.cc/paper_files/paper/2025/hash/dd745a0c4f91fe91866fe6788be9cc28-Abstract-Conference.html"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Hongjin",
+              "family": "Su",
+              "suffix": ""
+            },
+            {
+              "given": "Ruoxi",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Jinsung",
+              "family": "Yoon",
+              "suffix": ""
+            },
+            {
+              "given": "Pengcheng",
+              "family": "Yin",
+              "suffix": ""
+            },
+            {
+              "given": "Tao",
+              "family": "Yu",
+              "suffix": ""
+            },
+            {
+              "given": "Sercan O.",
+              "family": "Arik",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Hongjin",
+              "family": "Su",
+              "suffix": ""
+            },
+            {
+              "given": "Ruoxi",
+              "family": "Sun",
+              "suffix": ""
+            },
+            {
+              "given": "Jinsung",
+              "family": "Yoon",
+              "suffix": ""
+            },
+            {
+              "given": "Pengcheng",
+              "family": "Yin",
+              "suffix": ""
+            },
+            {
+              "given": "Tao",
+              "family": "Yu",
+              "suffix": ""
+            },
+            {
+              "given": "Sercan O.",
+              "family": "Arik",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.iclr.cc/paper_files/paper/2025/hash/dd745a0c4f91fe91866fe6788be9cc28-Abstract-Conference.html"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.iclr.cc/paper_files/paper/2025/hash/dd745a0c4f91fe91866fe6788be9cc28-Abstract-Conference.html"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "liu2025contextualreplay",
+      "entry_sha256": "765b2b34fdcb41bd9422ba5c78e4ce0a60335076648d2685473d311cdd5b62cc",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "ACL confirms title, four ordered authors, 2025 proceedings and pages 14179–14198.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Contextual Experience Replay for Self-Improvement of Language Agents"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://aclanthology.org/2025.acl-long.694/",
+          "supports": "ACL confirms title, four ordered authors, 2025 proceedings and pages 14179–14198.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Contextual Experience Replay for Self-Improvement of Language Agents",
+          "found": "Contextual Experience Replay for Self-Improvement of Language Agents",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.694/"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Yitao",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Chenglei",
+              "family": "Si",
+              "suffix": ""
+            },
+            {
+              "given": "Karthik R.",
+              "family": "Narasimhan",
+              "suffix": ""
+            },
+            {
+              "given": "Shunyu",
+              "family": "Yao",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Yitao",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Chenglei",
+              "family": "Si",
+              "suffix": ""
+            },
+            {
+              "given": "Karthik R.",
+              "family": "Narasimhan",
+              "suffix": ""
+            },
+            {
+              "given": "Shunyu",
+              "family": "Yao",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.694/"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://aclanthology.org/2025.acl-long.694/"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "qian2024ice",
+      "entry_sha256": "468092d54055fdedcd9885f1e6c78ee258a2fa8df26f7d493fee55a1ff0bc15a",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The arXiv record confirms title, nine ordered authors and January 2024 submission.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year"
+      ],
+      "search_queries": [
+        "Investigate-Consolidate-Exploit: A General Strategy for Inter-Task Agent Self-Evolution"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://arxiv.org/abs/2401.13996",
+          "supports": "The arXiv record confirms title, nine ordered authors and January 2024 submission.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Investigate-Consolidate-Exploit: A General Strategy for Inter-Task Agent Self-Evolution",
+          "found": "Investigate-Consolidate-Exploit: A General Strategy for Inter-Task Agent Self-Evolution",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2401.13996"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Cheng",
+              "family": "Qian",
+              "suffix": ""
+            },
+            {
+              "given": "Shihao",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Yujia",
+              "family": "Qin",
+              "suffix": ""
+            },
+            {
+              "given": "Yining",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Xin",
+              "family": "Cong",
+              "suffix": ""
+            },
+            {
+              "given": "Yankai",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Yesai",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhiyuan",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Maosong",
+              "family": "Sun",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Cheng",
+              "family": "Qian",
+              "suffix": ""
+            },
+            {
+              "given": "Shihao",
+              "family": "Liang",
+              "suffix": ""
+            },
+            {
+              "given": "Yujia",
+              "family": "Qin",
+              "suffix": ""
+            },
+            {
+              "given": "Yining",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Xin",
+              "family": "Cong",
+              "suffix": ""
+            },
+            {
+              "given": "Yankai",
+              "family": "Lin",
+              "suffix": ""
+            },
+            {
+              "given": "Yesai",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhiyuan",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Maosong",
+              "family": "Sun",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2401.13996"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://arxiv.org/abs/2401.13996"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "tang2025chemagent",
+      "entry_sha256": "c91292900495b39f376ac6a2295baa5563c52a93fb73f7f5e88d5df52bb5f23f",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "The published ICLR 2025 paper and arXiv record confirm title, twelve ordered authors and 2025.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "ChemAgent: Self-updating Library in Large Language Models Improves Chemical Reasoning"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://openreview.net/pdf?id=kuhIqeVg0e",
+          "supports": "The published ICLR 2025 paper and arXiv record confirm title, twelve ordered authors and 2025.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2501.06590",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{ChemAgent}: Self-updating Library in Large Language Models Improves Chemical Reasoning",
+          "found": "{ChemAgent}: Self-updating Library in Large Language Models Improves Chemical Reasoning",
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=kuhIqeVg0e"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Xiangru",
+              "family": "Tang",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyu",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Muyang",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Yanjun",
+              "family": "Shao",
+              "suffix": ""
+            },
+            {
+              "given": "Xunjian",
+              "family": "Yin",
+              "suffix": ""
+            },
+            {
+              "given": "Siru",
+              "family": "Ouyang",
+              "suffix": ""
+            },
+            {
+              "given": "Wangchunshu",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Pan",
+              "family": "Lu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhuosheng",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yilun",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Arman",
+              "family": "Cohan",
+              "suffix": ""
+            },
+            {
+              "given": "Mark",
+              "family": "Gerstein",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Xiangru",
+              "family": "Tang",
+              "suffix": ""
+            },
+            {
+              "given": "Tianyu",
+              "family": "Hu",
+              "suffix": ""
+            },
+            {
+              "given": "Muyang",
+              "family": "Ye",
+              "suffix": ""
+            },
+            {
+              "given": "Yanjun",
+              "family": "Shao",
+              "suffix": ""
+            },
+            {
+              "given": "Xunjian",
+              "family": "Yin",
+              "suffix": ""
+            },
+            {
+              "given": "Siru",
+              "family": "Ouyang",
+              "suffix": ""
+            },
+            {
+              "given": "Wangchunshu",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Pan",
+              "family": "Lu",
+              "suffix": ""
+            },
+            {
+              "given": "Zhuosheng",
+              "family": "Zhang",
+              "suffix": ""
+            },
+            {
+              "given": "Yilun",
+              "family": "Zhao",
+              "suffix": ""
+            },
+            {
+              "given": "Arman",
+              "family": "Cohan",
+              "suffix": ""
+            },
+            {
+              "given": "Mark",
+              "family": "Gerstein",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=kuhIqeVg0e"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2025",
+          "found": "2025",
+          "result": "match",
+          "evidence_urls": [
+            "https://openreview.net/pdf?id=kuhIqeVg0e"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wang2024trove",
+      "entry_sha256": "97c50c88a39aff84c9adf4998172d9ca3cafad6d8d9e3196057e4d1ac7385c5f",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "PMLR's ICML 2024 citation explicitly orders the authors Wang, Neubig, Fried, matching the input. The arXiv record orders Fried before Neubig; use the proceedings record for this proceedings citation.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "TroVE: Inducing Verifiable and Efficient Toolboxes for Solving Programmatic Tasks"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://proceedings.mlr.press/v235/wang24az.html",
+          "supports": "PMLR's ICML 2024 citation explicitly orders the authors Wang, Neubig, Fried, matching the input. The arXiv record orders Fried before Neubig; use the proceedings record for this proceedings citation.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "{TroVE}: Inducing Verifiable and Efficient Toolboxes for Solving Programmatic Tasks",
+          "found": "{TroVE}: Inducing Verifiable and Efficient Toolboxes for Solving Programmatic Tasks",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24az.html"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Fried",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Zhiruo",
+              "family": "Wang",
+              "suffix": ""
+            },
+            {
+              "given": "Graham",
+              "family": "Neubig",
+              "suffix": ""
+            },
+            {
+              "given": "Daniel",
+              "family": "Fried",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24az.html"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2024",
+          "found": "2024",
+          "result": "match",
+          "evidence_urls": [
+            "https://proceedings.mlr.press/v235/wang24az.html"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "rahman2023maintenance",
+      "entry_sha256": "017d98e5f3d1f458f38d5addb674032692418e8556d81513e4c1dd3fee397a27",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Needs review",
+      "summary": "The automated run already resolves the publisher-registered record, but the publisher DOI page could not be fetched in this web check. I cannot independently confirm the full metadata from the publisher here; retain for review rather than infer correctness from an index.",
+      "checked_fields": [
+        "publisher access attempt"
+      ],
+      "search_queries": [
+        "Application Maintenance Offshoring Using HCI Based Framework and Simple Multi Attribute Rating Technique (SMART)"
+      ],
+      "evidence": [
+        {
+          "title": "Publisher page (fetch failed)",
+          "url": "https://doi.org/10.1109/ACCESS.2023.3320941",
+          "supports": "The automated run already resolves the publisher-registered record, but the publisher DOI page could not be fetched in this web check. I cannot independently confirm the full metadata from the publisher here; retain for review rather than infer correctness from an index.",
+          "access": "failed"
+        }
+      ],
+      "comparisons": [],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "demoura2021lean4",
+      "entry_sha256": "a4529fb2037d62f828af8cd96dba3f257114d54702f4b52863b92eae14f3df61",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "Springer confirms de Moura and Ullrich, title, CADE 28, 2021 and pages 625–635.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "The Lean 4 Theorem Prover and Programming Language"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://link.springer.com/chapter/10.1007/978-3-030-79876-5_37",
+          "supports": "Springer confirms de Moura and Ullrich, title, CADE 28, 2021 and pages 625–635.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "The Lean 4 Theorem Prover and Programming Language",
+          "found": "The Lean 4 Theorem Prover and Programming Language",
+          "result": "match",
+          "evidence_urls": [
+            "https://link.springer.com/chapter/10.1007/978-3-030-79876-5_37"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Leonardo",
+              "family": "de Moura",
+              "suffix": ""
+            },
+            {
+              "given": "Sebastian",
+              "family": "Ullrich",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Leonardo",
+              "family": "de Moura",
+              "suffix": ""
+            },
+            {
+              "given": "Sebastian",
+              "family": "Ullrich",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://link.springer.com/chapter/10.1007/978-3-030-79876-5_37"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2021",
+          "found": "2021",
+          "result": "match",
+          "evidence_urls": [
+            "https://link.springer.com/chapter/10.1007/978-3-030-79876-5_37"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "wu2022autoformalization",
+      "entry_sha256": "35e3d4d18c80ea68a04d61bd0e1df525ab062ccb2f06b054bac1b190fb54e5ba",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Correct",
+      "summary": "NeurIPS identifies the matching 2022 paper; the arXiv record corroborates the seven ordered authors. A PDF extraction showing Yuhai is not sufficient to override the Yuhuai author metadata.",
+      "checked_fields": [
+        "title",
+        "authors",
+        "year",
+        "venue"
+      ],
+      "search_queries": [
+        "Autoformalization with Large Language Models"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://papers.nips.cc/paper_files/paper/2022/hash/d0c6bc641a56bebee9d985b937307367-Abstract-Conference.html",
+          "supports": "NeurIPS identifies the matching 2022 paper; the arXiv record corroborates the seven ordered authors. A PDF extraction showing Yuhai is not sufficient to override the Yuhuai author metadata.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2205.12615",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "title",
+          "input": "Autoformalization with Large Language Models",
+          "found": "Autoformalization with Large Language Models",
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper_files/paper/2022/hash/d0c6bc641a56bebee9d985b937307367-Abstract-Conference.html"
+          ]
+        },
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Yuhuai",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Albert Q.",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Wenda",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Markus N.",
+              "family": "Rabe",
+              "suffix": ""
+            },
+            {
+              "given": "Charles",
+              "family": "Staats",
+              "suffix": ""
+            },
+            {
+              "given": "Mateja",
+              "family": "Jamnik",
+              "suffix": ""
+            },
+            {
+              "given": "Christian",
+              "family": "Szegedy",
+              "suffix": ""
+            }
+          ],
+          "found": [
+            {
+              "given": "Yuhuai",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Albert Q.",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Wenda",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Markus N.",
+              "family": "Rabe",
+              "suffix": ""
+            },
+            {
+              "given": "Charles",
+              "family": "Staats",
+              "suffix": ""
+            },
+            {
+              "given": "Mateja",
+              "family": "Jamnik",
+              "suffix": ""
+            },
+            {
+              "given": "Christian",
+              "family": "Szegedy",
+              "suffix": ""
+            }
+          ],
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper_files/paper/2022/hash/d0c6bc641a56bebee9d985b937307367-Abstract-Conference.html"
+          ]
+        },
+        {
+          "field": "year",
+          "input": "2022",
+          "found": "2022",
+          "result": "match",
+          "evidence_urls": [
+            "https://papers.nips.cc/paper_files/paper/2022/hash/d0c6bc641a56bebee9d985b937307367-Abstract-Conference.html"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    },
+    {
+      "citation_key": "jiang2023draft",
+      "entry_sha256": "657da5eeca085d74b4b76b25be05d83b9179655c5c6daea5d082078f3e8cca3d",
+      "reviewed_at": "2026-09-26T09:22:02.651478+00:00",
+      "status": "Needs review",
+      "summary": "The ICLR paper supports 2023 despite the 2022 preprint date. Its author block ends Lacroix, Lample, Wu; the arXiv metadata and input end Lacroix, Wu, Lample. Resolve author order for the intended proceedings version before editing.",
+      "checked_fields": [
+        "title",
+        "authors (version conflict)",
+        "year"
+      ],
+      "search_queries": [
+        "Draft, Sketch, and Prove: Guiding Formal Theorem Provers with Informal Proofs"
+      ],
+      "evidence": [
+        {
+          "title": "Primary record",
+          "url": "https://openreview.net/pdf/cfd03f19d20263d9c1d1cc026a2b3528392fc857.pdf",
+          "supports": "The ICLR paper supports 2023 despite the 2022 preprint date. Its author block ends Lacroix, Lample, Wu; the arXiv metadata and input end Lacroix, Wu, Lample. Resolve author order for the intended proceedings version before editing.",
+          "access": "web search / primary page"
+        },
+        {
+          "title": "Additional primary evidence",
+          "url": "https://arxiv.org/abs/2210.12283",
+          "supports": "Corroborating or version-specific evidence discussed in the review summary.",
+          "access": "web search / primary page"
+        }
+      ],
+      "comparisons": [
+        {
+          "field": "authors",
+          "input": [
+            {
+              "given": "Albert Q.",
+              "family": "Jiang",
+              "suffix": ""
+            },
+            {
+              "given": "Sean",
+              "family": "Welleck",
+              "suffix": ""
+            },
+            {
+              "given": "Jin Peng",
+              "family": "Zhou",
+              "suffix": ""
+            },
+            {
+              "given": "Wenda",
+              "family": "Li",
+              "suffix": ""
+            },
+            {
+              "given": "Jiacheng",
+              "family": "Liu",
+              "suffix": ""
+            },
+            {
+              "given": "Mateja",
+              "family": "Jamnik",
+              "suffix": ""
+            },
+            {
+              "given": "Timoth{\\'e}e",
+              "family": "Lacroix",
+              "suffix": ""
+            },
+            {
+              "given": "Yuhuai",
+              "family": "Wu",
+              "suffix": ""
+            },
+            {
+              "given": "Guillaume",
+              "family": "Lample",
+              "suffix": ""
+            }
+          ],
+          "found": "arXiv ends Lacroix, Wu, Lample; ICLR paper ends Lacroix, Lample, Wu",
+          "result": "unknown",
+          "evidence_urls": [
+            "https://openreview.net/pdf/cfd03f19d20263d9c1d1cc026a2b3528392fc857.pdf",
+            "https://arxiv.org/abs/2210.12283"
+          ]
+        }
+      ],
+      "limitations": "Assessment covers bibliographic identity and the fields listed above, not scientific claims, all ancillary BibTeX fields, or the need to replace a valid preprint with a later publication. See summary for version and access limitations."
+    }
+  ]
+}

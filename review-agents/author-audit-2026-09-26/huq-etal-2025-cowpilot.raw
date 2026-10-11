@@ -1,0 +1,23 @@
+@inproceedings{huq-etal-2025-cowpilot,
+    title = "{C}ow{P}ilot: A Framework for Autonomous and Human-Agent Collaborative Web Navigation",
+    author = "Huq, Faria  and
+      Wang, Zora Zhiruo  and
+      Xu, Frank F.  and
+      Ou, Tianyue  and
+      Zhou, Shuyan  and
+      Bigham, Jeffrey P.  and
+      Neubig, Graham",
+    editor = "Dziri, Nouha  and
+      Ren, Sean (Xiang)  and
+      Diao, Shizhe",
+    booktitle = "Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (System Demonstrations)",
+    month = apr,
+    year = "2025",
+    address = "Albuquerque, New Mexico",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.naacl-demo.17/",
+    doi = "10.18653/v1/2025.naacl-demo.17",
+    pages = "163--172",
+    ISBN = "979-8-89176-191-9"
+}
+

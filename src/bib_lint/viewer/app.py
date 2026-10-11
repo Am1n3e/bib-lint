@@ -7,7 +7,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from bib_lint.status import STATUS_COLORS, source_status
+from bib_lint.status import STATUS_COLORS
 from bib_lint.verification.matching import input_record
 from bib_lint.viewer.agent import attach_reviews, sidecar_path
 from bib_lint.viewer.controls import workflow_controls
@@ -18,6 +18,7 @@ from bib_lint.viewer.data import (
     load_report,
     pretty_xml,
     read_response,
+    source_rows,
     suggestions,
     table_rows,
 )
@@ -287,15 +288,7 @@ def detail(item, cache_dir):
                 st.info("No field differences available.")
             st.subheader("Resolved Sources")
             st.dataframe(
-                [
-                    {
-                        "Source": m["name"],
-                        "Status": [source_status(m["status"])],
-                        "URL": m.get("source_url") or (m.get("found_ref") or {}).get("url"),
-                        "Error": m.get("error", {}).get("message", ""),
-                    }
-                    for m in methods
-                ]
+                source_rows(methods)
                 + (
                     [
                         {
@@ -303,6 +296,8 @@ def detail(item, cache_dir):
                             "Status": [review["status"]],
                             "URL": review["evidence"][0]["url"],
                             "Error": "",
+                            "Revision": "",
+                            "Search scope": "",
                         }
                     ]
                     if review

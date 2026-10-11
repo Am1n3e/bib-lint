@@ -2,6 +2,7 @@ import copy
 
 import httpx
 import pytest
+from provider_support import fixture_registry
 from support import ENTRY, RECORD, FakeClient
 
 from bib_lint.verification import verify_reference
@@ -13,7 +14,7 @@ from bib_lint.verification.matching import (
     same_record,
     select_result,
 )
-from bib_lint.verification.providers import verify_reference_publisher
+from bib_lint.verification.providers.protocol import RequestPolicy
 
 
 @pytest.mark.parametrize(
@@ -48,65 +49,6 @@ def test_missing_core_metadata_cannot_confirm(field):
     found = {**RECORD, field: None if field != "authors" else []}
     result = select_result("crossref", RECORD, [found], authority=True)
     assert build_consensus([result])["is_correct"] is None
-
-
-@pytest.mark.parametrize(
-    "name, data, text",
-    [
-        ("crossref", {"message": None}, None),
-        ("openalex", [], None),
-        ("arxiv", None, "<broken"),
-        (
-            "arxiv",
-            None,
-            '<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>error</id></entry></feed>',
-        ),
-    ],
-)
-def test_malformed_provider_is_saved_as_source_failure(name, data, text):
-    from bib_lint.verification.providers import METHODS
-
-    result = verify_reference(ENTRY, FakeClient(data, text), methods={name: METHODS[name]})
-    assert result["methods"][0]["status"] == "error"
-    assert result["methods"][0]["error"]["code"] == "invalid_response"
-    assert result["is_correct"] is None
-
-
-@pytest.mark.parametrize(
-    "location, expected",
-    [
-        ("https://example.org/escape", "unsupported_host"),
-        ("https://jmlr.org/again", "redirect_limit"),
-    ],
-)
-def test_publisher_redirect_boundaries(tmp_path, location, expected):
-    client = MetadataClient(
-        tmp_path,
-        transport=httpx.MockTransport(
-            lambda _: httpx.Response(302, headers={"Location": location})
-        ),
-    )
-    with pytest.raises(LookupFailure) as exc:
-        verify_reference_publisher({**RECORD, "input_url": "https://jmlr.org/start"}, client)
-    assert exc.value.code == expected
-    assert len(client.evidence) <= 4
-    client.close()
-
-
-def test_allowed_publisher_redirect_and_no_metadata(tmp_path):
-    calls = []
-
-    def respond(request):
-        calls.append(str(request.url))
-        if len(calls) == 1:
-            return httpx.Response(302, headers={"Location": "/paper"})
-        return httpx.Response(200, text="<html>No citation metadata</html>")
-
-    client = MetadataClient(tmp_path, transport=httpx.MockTransport(respond))
-    result = verify_reference_publisher({**RECORD, "input_url": "http://jmlr.org/start"}, client)
-    assert result["status"] == "not_found"
-    assert calls == ["https://jmlr.org/start", "https://jmlr.org/paper"]
-    client.close()
 
 
 def test_expiry_refresh_and_failed_response_never_success(tmp_path, monkeypatch):
@@ -160,8 +102,8 @@ def test_pacing_has_controlled_clock(tmp_path, monkeypatch):
     client = MetadataClient(
         tmp_path, transport=httpx.MockTransport(lambda _: httpx.Response(200, text="OK"))
     )
-    client.get("https://export.arxiv.org/a")
-    client.get("https://export.arxiv.org/b")
+    client.get("https://export.arxiv.org/a", policy=RequestPolicy(interval=3.1))
+    client.get("https://export.arxiv.org/b", policy=RequestPolicy(interval=3.1))
     assert sleeps == [3.1]
     client.close()
 
@@ -171,4 +113,4 @@ def test_evidence_storage_error_is_execution_failure():
         raise OSError("Cannot save response")
 
     with pytest.raises(OSError):
-        verify_reference(ENTRY, FakeClient(), methods={"test": fail})
+        verify_reference(ENTRY, FakeClient(), methods=fixture_registry({"test": fail}))

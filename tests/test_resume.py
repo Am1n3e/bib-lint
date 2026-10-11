@@ -2,6 +2,7 @@ import json
 
 import httpx
 import pytest
+from provider_support import fixture_registry
 from support import ENTRY, RECORD, FakeClient
 
 from bib_lint.storage import report_lock
@@ -48,7 +49,11 @@ def test_interrupt_checkpoints_each_method_and_resumes(tmp_path):
         raise KeyboardInterrupt
 
     with pytest.raises(KeyboardInterrupt):
-        verify_file(source, client=FakeClient(), methods={"first": first, "second": second})
+        verify_file(
+            source,
+            client=FakeClient(),
+            methods=fixture_registry({"first": first, "second": second}),
+        )
     assert source.exists()
     assert not json.loads(source.read_text())["verification_run"]["complete"]
     logs = []
@@ -56,7 +61,7 @@ def test_interrupt_checkpoints_each_method_and_resumes(tmp_path):
         source,
         client=FakeClient(),
         progress=logs.append,
-        methods={"first": first, "second": lambda r, c: result("second")},
+        methods=fixture_registry({"first": first, "second": lambda r, c: result("second")}),
     )
     assert calls == ["first"]
     assert output == final and not source.exists()
@@ -69,7 +74,7 @@ def test_interrupt_checkpoints_each_method_and_resumes(tmp_path):
     verify_file(
         source,
         client=FakeClient(),
-        methods={"first": first, "second": lambda r, c: result("second")},
+        methods=fixture_registry({"first": first, "second": lambda r, c: result("second")}),
     )
     assert calls == ["first"]
 
@@ -80,7 +85,9 @@ def test_unused_entries_never_call_providers(tmp_path):
     def forbidden(record, client):
         pytest.fail("Unused reference reached provider")
 
-    output, summary = verify_file(source, client=FakeClient(), methods={"test": forbidden})
+    output, summary = verify_file(
+        source, client=FakeClient(), methods=fixture_registry({"test": forbidden})
+    )
     assert summary["skipped_unused"] == 1
     assert "correctness" not in json.loads(output.read_text())["items"][0]["validations"]
 
@@ -130,7 +137,7 @@ def test_errors_retry_on_resume_but_completed_methods_skip(tmp_path):
     _, summary = verify_file(
         source,
         client=FakeClient(),
-        methods={"first": lambda r, c: result("first"), "second": failure},
+        methods=fixture_registry({"first": lambda r, c: result("first"), "second": failure}),
     )
     assert summary["method_errors"] == 1
 
@@ -140,7 +147,7 @@ def test_errors_retry_on_resume_but_completed_methods_skip(tmp_path):
     _, summary = verify_file(
         source,
         client=FakeClient(),
-        methods={"first": forbidden, "second": lambda r, c: result("second")},
+        methods=fixture_registry({"first": forbidden, "second": lambda r, c: result("second")}),
     )
     assert summary["method_errors"] == 0
 
@@ -160,7 +167,7 @@ def test_retry_progress(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("failure", ["rate_limit", "server_error", "network"])
-def test_semantic_scholar_backoff_schedule(tmp_path, monkeypatch, failure):
+def test_configured_backoff_schedule(tmp_path, monkeypatch, failure):
     clock = [100.0]
     sleeps = []
     monkeypatch.setattr("bib_lint.verification.http.time.monotonic", lambda: clock[0])
@@ -174,27 +181,30 @@ def test_semantic_scholar_backoff_schedule(tmp_path, monkeypatch, failure):
 
     def respond(request):
         calls.append(request)
-        if len(calls) == 6:
+        if len(calls) == 3:
             return httpx.Response(200, text="OK")
         if failure == "network":
             raise httpx.ConnectError("Temporary failure", request=request)
-        return httpx.Response(429 if failure == "rate_limit" else 503, headers={"Retry-After": "1"})
+        return httpx.Response(
+            429 if failure == "rate_limit" else 503,
+            headers={"Retry-After": str((2, 4)[len(calls) - 1])},
+        )
 
     client = MetadataClient(tmp_path, transport=httpx.MockTransport(respond))
-    assert client.get("https://api.semanticscholar.org/graph/v1/paper/test") == "OK"
-    assert sleeps == [10, 15, 20, 25, 30]
-    assert client.evidence[0]["attempts"] == 6
+    assert client.get("https://fixture.test/paper") == "OK"
+    assert sleeps == [2, 4]
+    assert client.evidence[0]["attempts"] == 3
     client.close()
 
 
-def test_semantic_scholar_retries_stop_after_six_attempts(tmp_path, monkeypatch):
+def test_configured_retries_stop_after_budget(tmp_path, monkeypatch):
     from bib_lint.verification.http import LookupFailure
 
     monkeypatch.setattr("bib_lint.verification.http.time.sleep", lambda _: None)
     client = MetadataClient(tmp_path, transport=httpx.MockTransport(lambda _: httpx.Response(429)))
     with pytest.raises(LookupFailure, match="rate limit"):
-        client.get("https://api.semanticscholar.org/graph/v1/paper/test")
-    assert client.evidence[0]["attempts"] == 6
+        client.get("https://fixture.test/paper")
+    assert client.evidence[0]["attempts"] == 3
     client.close()
 
 
@@ -212,7 +222,10 @@ def test_verify_single_key_preserves_other_results_and_pending_state(tmp_path):
         return result("test")
 
     output, _ = verify_file(
-        source, citation_key="example", client=FakeClient(), methods={"test": verify}
+        source,
+        citation_key="example",
+        client=FakeClient(),
+        methods=fixture_registry({"test": verify}),
     )
     assert output == source
     assert len(calls) == 1
@@ -221,7 +234,11 @@ def test_verify_single_key_preserves_other_results_and_pending_state(tmp_path):
     assert "correctness" not in partial["items"][1]["validations"]
     first = partial["items"][0]["validations"]["correctness"]
     final, _ = verify_file(
-        source, citation_key="Other", refresh=True, client=FakeClient(), methods={"test": verify}
+        source,
+        citation_key="Other",
+        refresh=True,
+        client=FakeClient(),
+        methods=fixture_registry({"test": verify}),
     )
     assert final.name == "references.json"
     assert not source.exists()

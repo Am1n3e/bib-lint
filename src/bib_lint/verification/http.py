@@ -142,11 +142,15 @@ class MetadataClient:
         else:
             self.emit("Response:\n" + json.dumps(redact(event), ensure_ascii=False, indent=2))
 
-    def get(self, url, *, params=None, headers=None, allowed_hosts=None):
+    def get(self, url, *, params=None, headers=None, allowed_hosts=None, policy=None, budget=None):
         host = urlsplit(url).hostname
         if allowed_hosts is not None and host not in allowed_hosts:
             raise LookupFailure("unsupported_host", "Redirect or URL is outside supported sites")
         request = self.client.build_request("GET", url, params=params, headers=headers)
+        if policy is not None:
+            request.extensions["timeout"] = dict.fromkeys(
+                ("connect", "read", "write", "pool"), policy.timeout
+            )
         # Credentials affect neither the public record identity nor the persisted evidence.
         public_url = str(request.url.copy_remove_param("api_key"))
         key = hashlib.sha256(public_url.encode()).hexdigest()
@@ -182,11 +186,12 @@ class MetadataClient:
             "attempts": 0,
         }
         self.evidence.append(evidence)
-        interval = 3.1 if host == "export.arxiv.org" else 1.0
-        semantic_scholar = host == "api.semanticscholar.org"
-        backoffs = (10, 15, 20, 25, 30) if semantic_scholar else (2, 4)
-        max_delay = 30 if semantic_scholar else 10
+        interval = policy.interval if policy else 1.0
+        backoffs = policy.backoffs if policy else (2, 4)
+        max_delay = policy.max_retry_after if policy else 10
         for attempt in range(len(backoffs) + 1):
+            if budget is not None:
+                budget.consume_attempt()
             delay = interval - (time.monotonic() - self.last_request.get(host, 0))
             if delay > 0:
                 time.sleep(delay)
@@ -229,10 +234,8 @@ class MetadataClient:
                     delay = float(retry)
                 except ValueError:
                     delay = backoffs[attempt]
-                if semantic_scholar:
-                    delay = max(backoffs[attempt], delay)
-                if delay > max_delay:
-                    self.emit(f"Retry-After {delay:g} seconds exceeds retry budget; stopping")
+                if not (delay >= 0 and delay <= max_delay):
+                    self.emit("Retry-After exceeds retry budget; stopping")
                     break
                 label = "Rate limit" if response.status_code == 429 else "Server error"
                 self.emit(f"{label} backoff {max(0, delay):g} seconds")

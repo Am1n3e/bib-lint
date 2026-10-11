@@ -3,19 +3,13 @@ import json
 
 import httpx
 import pytest
+from provider_support import fixture_registry
 from support import ENTRY, RECORD, FakeClient
 
 from bib_lint.verification import verify_file, verify_reference
 from bib_lint.verification.consensus import build_consensus
 from bib_lint.verification.http import LookupFailure, MetadataClient
 from bib_lint.verification.matching import compare_fields, input_record, normalize, select_result
-from bib_lint.verification.providers import (
-    verify_reference_arxiv,
-    verify_reference_crossref,
-    verify_reference_openalex,
-    verify_reference_publisher,
-    verify_reference_semantic_scholar,
-)
 
 
 def method(name="crossref", record=None, authority=True, original=None):
@@ -104,89 +98,12 @@ def test_all_adapters_run_after_failure():
         calls.append("succeed")
         return method()
 
-    result = verify_reference(ENTRY, FakeClient(), methods={"failed": fail, "crossref": succeed})
+    result = verify_reference(
+        ENTRY, FakeClient(), methods=fixture_registry({"failed": fail, "crossref": succeed})
+    )
     assert calls == ["fail", "succeed"]
     assert result["methods"][0]["error"]["code"] == "rate_limited"
     assert result["is_correct"] is True
-
-
-def test_crossref_adapter():
-    data = {
-        "message": {
-            "title": ["An Example Paper"],
-            "author": [{"given": "Jane", "family": "Smith"}],
-            "published": {"date-parts": [[2025]]},
-            "container-title": ["Example Journal"],
-            "DOI": "10.1234/example",
-            "URL": RECORD["url"],
-        }
-    }
-    result = verify_reference_crossref(RECORD, FakeClient(data))
-    assert result["lookup"] == "doi"
-    assert result["found_ref"]["year"] == 2025
-
-
-def test_search_recovers_from_wrong_doi():
-    class Client(FakeClient):
-        def json(self, url, **kwargs):
-            if url.endswith("/works"):
-                return {
-                    "message": {
-                        "items": [
-                            {
-                                "title": [RECORD["title"]],
-                                "author": RECORD["authors"],
-                                "DOI": "10.1234/correct",
-                            }
-                        ]
-                    }
-                }
-            raise LookupFailure("not_found", "404")
-
-    result = verify_reference_crossref(RECORD, Client())
-    assert result["status"] == "found"
-    assert any(d["field"] == "doi" for d in result["differences"])
-
-
-def test_openalex_and_semantic_adapters():
-    data = {
-        "title": RECORD["title"],
-        "authorships": [{"author": {"display_name": "Jane Smith"}}],
-        "publication_year": 2025,
-        "doi": "https://doi.org/10.1234/example",
-        "primary_location": {"source": {"display_name": "Example Journal"}},
-    }
-    assert verify_reference_openalex(RECORD, FakeClient(data))["status"] == "found"
-    data = {
-        "title": RECORD["title"],
-        "authors": [{"name": "Jane Smith"}],
-        "year": 2025,
-        "venue": "Example Journal",
-        "externalIds": {"DOI": "10.1234/example"},
-    }
-    assert verify_reference_semantic_scholar(RECORD, FakeClient(data))["status"] == "found"
-
-
-def test_arxiv_adapter():
-    feed = """<feed xmlns="http://www.w3.org/2005/Atom"><entry>
-    <id>https://arxiv.org/abs/2501.12345v1</id><title>An Example Paper</title>
-    <author><name>Jane Smith</name></author><published>2025-01-01</published>
-    </entry></feed>"""
-    result = verify_reference_arxiv(RECORD, FakeClient(text=feed))
-    assert result["found_ref"]["identifiers"]["arxiv"] == "2501.12345v1"
-    assert result["found_ref"]["year"] == "2025"
-
-
-def test_publisher_adapter_and_host_restriction():
-    assert verify_reference_publisher(RECORD, FakeClient())["status"] == "not_applicable"
-    record = {**RECORD, "input_url": "https://proceedings.mlr.press/v1/example.html"}
-    text = """<meta name="citation_title" content="An Example Paper">
-    <meta name="citation_author" content="Jane Smith">
-    <meta name="citation_date" content="2025/01/01">
-    <meta name="citation_conference_title" content="Example Journal">"""
-    result = verify_reference_publisher(record, FakeClient(text=text))
-    assert result["status"] == "found"
-    assert result["found_ref"]["year"] == "2025"
 
 
 def test_cache_redacts_credentials(tmp_path):
@@ -231,7 +148,7 @@ def test_verify_report_preserves_input_and_validations(tmp_path):
     source.write_text(json.dumps(report))
     original = source.read_bytes()
     output, summary = verify_file(
-        source, client=FakeClient(), methods={"crossref": lambda r, c: method()}
+        source, client=FakeClient(), methods=fixture_registry({"crossref": lambda r, c: method()})
     )
     data = json.loads(output.read_text())
     assert data["items"][0]["entry"] == ENTRY
@@ -341,10 +258,10 @@ def test_title_difference_is_mismatch_but_missing_title_is_unknown():
     assert compare_fields(RECORD, RECORD)[0]["result"] == "match"
 
 
-def test_default_sources_exclude_semantic_scholar():
+def test_default_sources_are_six_approved_providers():
     from bib_lint.verification.providers import METHODS
 
-    assert set(METHODS) == {"crossref", "arxiv", "openalex", "publisher"}
+    assert set(METHODS) == {"arxiv", "pmlr", "jmlr", "acl_anthology", "neurips", "openreview"}
 
 
 def test_abbreviated_authors_partial_match_and_wrong_prefix():

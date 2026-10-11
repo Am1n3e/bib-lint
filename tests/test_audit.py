@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import pytest
+from provider_support import fixture_registry
 from support import FakeClient
 
 from bib_lint.audit import Workspace, audit_summary, run_audit
@@ -26,7 +27,7 @@ def found(record, client):
 
 
 def audit(bib, **kwargs):
-    return run_audit(bib, client=FakeClient(), methods={"test": found}, **kwargs)
+    return run_audit(bib, client=FakeClient(), methods=fixture_registry({"test": found}), **kwargs)
 
 
 def test_all_scope_partial_and_resume(bib):
@@ -72,7 +73,7 @@ def test_aux_recursive_warnings_preview_and_no_eligible(bib, tmp_path):
         aux=aux,
         output=tmp_path / "empty",
         client=FakeClient(),
-        methods={"test": lambda *_: pytest.fail("No eligible entries")},
+        methods=fixture_registry({"test": lambda *_: pytest.fail("No eligible entries")}),
     )
     assert audit_summary(report)["eligible"] == 0
 
@@ -149,7 +150,10 @@ def test_interrupt_refresh_and_policy_registry_recompute(bib, monkeypatch):
 
     with pytest.raises(KeyboardInterrupt):
         run_audit(
-            bib, refresh=True, client=FakeClient(), methods={"test": found, "second": interrupted}
+            bib,
+            refresh=True,
+            client=FakeClient(),
+            methods=fixture_registry({"test": found, "second": interrupted}),
         )
     assert workspace.final.read_bytes() == previous
     checkpoint = load_report(workspace.root)
@@ -164,7 +168,7 @@ def test_interrupt_refresh_and_policy_registry_recompute(bib, monkeypatch):
         calls.append(record["title"])
         return found(record, client)
 
-    run_audit(bib, client=FakeClient(), methods={"test": again, "second": again})
+    run_audit(bib, client=FakeClient(), methods=fixture_registry({"test": again, "second": again}))
     assert len(calls) == 4
 
 
@@ -201,7 +205,9 @@ def test_import_legacy_reuses_compatible_and_preserves_inputs(bib, tmp_path):
     aux = tmp_path / "paper.aux"
     aux.write_text(r"\citation{A}")
     parsed, _ = parse_bib(bib, aux)
-    legacy, _ = verify_file(parsed.output, client=FakeClient(), methods={"test": found})
+    legacy, _ = verify_file(
+        parsed.output, client=FakeClient(), methods=fixture_registry({"test": found})
+    )
     before = legacy.read_bytes()
     sidecar = legacy.with_suffix(".agent.json")
     sidecar.write_text("manual evidence")
@@ -209,7 +215,7 @@ def test_import_legacy_reuses_compatible_and_preserves_inputs(bib, tmp_path):
         legacy,
         output=tmp_path / "import",
         client=FakeClient(),
-        methods={"test": lambda *_: pytest.fail("Compatible outcome rerun")},
+        methods=fixture_registry({"test": lambda *_: pytest.fail("Compatible outcome rerun")}),
     )
     assert report["verification_run"]["fingerprint"] == fingerprint(report)
     assert legacy.read_bytes() == before and sidecar.read_text() == "manual evidence"
@@ -266,7 +272,9 @@ def test_comment_only_changes_and_preview_preserve_existing_decisions(bib):
     audit(bib, preview=True)
     assert workspace.final.read_bytes() == previous and not workspace.checkpoint.exists()
     run_audit(
-        bib, client=FakeClient(), methods={"test": lambda *_: pytest.fail("Comment reran provider")}
+        bib,
+        client=FakeClient(),
+        methods=fixture_registry({"test": lambda *_: pytest.fail("Comment reran provider")}),
     )
 
 

@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from provider_support import fixture_registry
 from support import FakeClient
 
 from bib_lint.audit import run_audit
@@ -17,7 +18,9 @@ def source(tmp_path, monkeypatch):
 
     def run(*args, **kwargs):
         kwargs["client"] = FakeClient()
-        kwargs["methods"] = {"test": lambda r, c: select_result("test", r, [r], authority=True)}
+        kwargs["methods"] = fixture_registry(
+            {"test": lambda r, c: select_result("test", r, [r], authority=True)}
+        )
         return run_audit(*args, **kwargs)
 
     monkeypatch.setattr("bib_lint.cli.run_audit", run)
@@ -109,7 +112,9 @@ def test_provider_failure_exit_zero_and_invalid_key_unchanged(source, monkeypatc
         raise RuntimeError("provider down")
 
     def run(*args, **kwargs):
-        return run_audit(*args, **kwargs, client=FakeClient(), methods={"test": fail})
+        return run_audit(
+            *args, **kwargs, client=FakeClient(), methods=fixture_registry({"test": fail})
+        )
 
     monkeypatch.setattr("bib_lint.cli.run_audit", run)
     assert main(["verify", str(source), "--json"]) == 0
@@ -127,7 +132,9 @@ def test_interrupt_and_write_failure_outputs(source, monkeypatch, capsys):
         raise KeyboardInterrupt
 
     def run(*args, **kwargs):
-        return run_audit(*args, **kwargs, client=FakeClient(), methods={"test": interrupted})
+        return run_audit(
+            *args, **kwargs, client=FakeClient(), methods=fixture_registry({"test": interrupted})
+        )
 
     monkeypatch.setattr("bib_lint.cli.run_audit", run)
     assert main(["verify", str(source), "--json"]) == 130

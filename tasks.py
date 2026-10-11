@@ -75,3 +75,81 @@ def complexity(context):
 @task(pre=[lint, format_check, complexity])
 def check(context):
     """Run all code quality checks used by CI."""
+
+
+BENCHMARK_HELP = {
+    "benchmark": "Dataset: all, hallmark, zenodo, gptzero, or hallucitation (default: all).",
+    "root": (
+        "Artifact directory; defaults to evaluation/.artifacts. "
+        "Use a fresh root after code changes."
+    ),
+}
+SPLIT_HELP = "One official split; requires a single benchmark. Defaults to every split."
+
+
+def _benchmark_python(context, module, arguments, root):
+    command = ["uv", "run", "--locked", "--group", "benchmark", "python", "-m", module]
+    command.extend(arguments)
+    if root:
+        command.extend(["--root", root])
+    with context.cd(str(ROOT)):
+        context.run(shlex.join(command), echo=True)
+
+
+def _benchmark_harness(context, command, benchmark, split, root, extra=()):
+    arguments = [command, "--benchmark", benchmark]
+    if split:
+        arguments.extend(["--split", split])
+    arguments.extend(extra)
+    _benchmark_python(context, "evaluation.harness", arguments, root)
+
+
+@task(help=BENCHMARK_HELP)
+def benchmark_setup(context, benchmark="all", root=""):
+    """Install the locked benchmark scorer and download or verify frozen datasets."""
+    with context.cd(str(ROOT)):
+        context.run("uv sync --locked --group benchmark", echo=True)
+    _benchmark_harness(context, "prepare", benchmark, "", root)
+
+
+@task(
+    help={
+        **BENCHMARK_HELP,
+        "split": SPLIT_HELP,
+        "limit": "First N cases per split for a partial smoke run; 0 means the full dataset.",
+        "workers": "Concurrent references with shared host pacing (default: 8).",
+        "retry_errors": "Retry failed cases and provider errors when resuming.",
+        "verbose": "Print provider progress while auditing references.",
+    }
+)
+def benchmark_run(
+    context,
+    benchmark="all",
+    split="",
+    root="",
+    limit=0,
+    workers=8,
+    retry_errors=False,
+    verbose=False,
+):
+    """Run or resume live reference audits and score the selected benchmarks."""
+    extra = ["--workers", str(workers)]
+    if limit:
+        extra.extend(["--limit", str(limit)])
+    if retry_errors:
+        extra.append("--retry-errors")
+    if verbose:
+        extra.append("--verbose")
+    _benchmark_harness(context, "run", benchmark, split, root, extra)
+
+
+@task(help={**BENCHMARK_HELP, "split": SPLIT_HELP})
+def benchmark_score(context, benchmark="all", split="", root=""):
+    """Rescore saved predictions without contacting metadata providers."""
+    _benchmark_harness(context, "score", benchmark, split, root)
+
+
+@task(help={"root": BENCHMARK_HELP["root"]})
+def benchmark_verify(context, root=""):
+    """Verify every benchmark and export baseline results after full completion."""
+    _benchmark_python(context, "scripts.check_baseline", [], root)

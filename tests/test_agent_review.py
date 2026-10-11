@@ -5,6 +5,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 from support import viewer_main
 
+from bib_lint.viewer import app as viewer_app
 from bib_lint.viewer.agent import attach_reviews, entry_digest, sidecar_path
 from bib_lint.viewer.data import comparison_rows, load_report, suggestions, table_rows
 
@@ -87,10 +88,15 @@ def test_malformed_evidence_rejected_before_attachment(tmp_path, bad):
     assert "agent_review" not in report["items"][0]
 
 
-def test_agent_ui_and_automated_metrics(tmp_path, monkeypatch):
+@pytest.mark.parametrize("entrypoint", ["function", "file"])
+def test_agent_ui_and_automated_metrics(tmp_path, monkeypatch, entrypoint):
     fixture(tmp_path)
     monkeypatch.chdir(tmp_path)
-    app = AppTest.from_function(viewer_main).run()
+    app = (
+        AppTest.from_file(viewer_app.__file__)
+        if entrypoint == "file"
+        else AppTest.from_function(viewer_main)
+    ).run()
     assert not app.exception
     assert app.dataframe[0].value.iloc[0]["Agent"] == ["Invalid"]
     assert next(m for m in app.metric if m.label == "Correct").value == "1/1"

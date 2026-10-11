@@ -306,10 +306,6 @@ def main(argv=None):
     return 0 if result["complete"] else 2
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
-
-
 def _check_evidence(folder, report):
     cache = folder / "audit" / "cache"
     path = cache / "checksum.json"
@@ -385,3 +381,7 @@ def _check_hallmark_scores(split, cases, aligned, folder, sources, result):
     accuracy = (cm.tp + cm.tn) / total if total else None
     if result["supplementary_conservative_accuracy"] != accuracy:
         raise ValueError("Supplementary accuracy differs from official confusion counts")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

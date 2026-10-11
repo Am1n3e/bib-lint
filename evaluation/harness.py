@@ -214,10 +214,6 @@ def main(argv=None):
     return 2 if failed else 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
-
-
 def _case_executor(folder, name, split, selected, stopped, verbose, client, pacer, audit, root):
     def execute(case, index):
         case_folder = folder / "cases" / hashlib.sha256(case.id.encode()).hexdigest()[:24]
@@ -351,3 +347,7 @@ def _benchmark_command(args, name, root):
         if not value["harness_ok"]:
             failed = True
     return results[name], failed
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

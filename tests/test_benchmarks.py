@@ -3,6 +3,9 @@
 import csv
 import io
 import json
+import subprocess
+import sys
+from pathlib import Path
 
 import httpx
 import pytest
@@ -78,6 +81,36 @@ def zenodo_rows():
         }
         for i, label in enumerate(["verified", "problematic", "problematic"], 1)
     ]
+
+
+def test_benchmark_module_commands_use_frozen_local_inputs(tmp_path):
+    snapshot(
+        tmp_path, "zenodo", {"manual_reference_verification_dataset.csv": csv_bytes(zenodo_rows())}
+    )
+    for command in ("prepare", "score"):
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "evaluation.harness",
+                command,
+                "--benchmark",
+                "zenodo",
+                "--root",
+                str(tmp_path),
+            ],
+            cwd=Path(__file__).resolve().parents[1],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+        assert result.returncode == 0, result.stdout + result.stderr
+        value = json.loads(result.stdout)["zenodo"]
+        if command == "prepare":
+            assert value["status"] == "ready"
+        else:
+            assert value["all"]["coverage"]["official_cases"] == 3
 
 
 def report(key="a", verdict=None, status="not_found", *, complete=True):

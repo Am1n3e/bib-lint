@@ -308,10 +308,6 @@ def main():
     detail(item, cache_dir)
 
 
-if __name__ == "__main__":
-    main()
-
-
 def _agent_panel(tab, review):
     with tab:
         st.badge(review["status"], color=STATUS_COLORS[review["status"]])
@@ -381,3 +377,7 @@ def _comparison_panel(comparison, item, review, summary, result, methods):
                 width="stretch",
                 column_config={"URL": st.column_config.LinkColumn(), "Status": status_column()},
             )
+
+
+if __name__ == "__main__":
+    main()

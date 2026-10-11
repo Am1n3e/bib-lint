@@ -2,6 +2,9 @@
 
 import json
 import math
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 from test_benchmarks import csv_bytes, report, snapshot, zenodo_rows
@@ -51,6 +54,23 @@ def test_full_artifact_audit_accepts_native_results_and_rejects_wrong_metrics(tm
     result = inspect(tmp_path, benchmarks=["zenodo"])
     assert not result["complete"]
     assert any("metrics differ" in error for error in result["errors"])
+
+
+def test_baseline_module_validates_available_cases_without_other_snapshots(tmp_path):
+    fixture_run(tmp_path)
+    result = subprocess.run(
+        [sys.executable, "-m", "scripts.check_baseline", "--root", str(tmp_path)],
+        cwd=Path(__file__).resolve().parents[1],
+        capture_output=True,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+    assert result.returncode == 2, result.stdout + result.stderr
+    value = json.loads(result.stdout)
+    assert value["verified_cases"] == 3
+    assert not value["complete"]
+    assert "NameError" not in str(value["errors"])
 
 
 def test_partial_runs_never_pass_completion_audit(tmp_path):

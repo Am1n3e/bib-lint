@@ -38,6 +38,124 @@ class OpenReviewProvider:
         discovery_config=(("venues", "ICLR.cc,ICML.cc,NeurIPS.cc,TMLR"),),
     )
 
+    def _discover_venue(self, query, context, venueid):
+        offset = 0
+        while True:
+            notes, count = self._notes(
+                context,
+                V2,
+                "/notes",
+                {
+                    "content.venueid": venueid,
+                    "details": "directReplies,original",
+                    "limit": 20,
+                    "offset": offset,
+                },
+            )
+            for candidate in self._records(notes):
+                if shortlisted(query, candidate.title or ""):
+                    yield candidate
+            offset += len(notes)
+            if (count is not None and offset >= count) or (count is None and len(notes) < 20):
+                break
+            if not notes:
+                raise LookupFailure(
+                    "incomplete_search", "OpenReview venue pagination stopped early"
+                )
+
+    def _discover_title(self, query, context):
+        offset = 0
+        while True:
+            try:
+                notes, count = self._notes(
+                    context,
+                    V2,
+                    "/notes/search",
+                    {
+                        "term": query.title,
+                        "type": "terms",
+                        "content": "title",
+                        "limit": 20,
+                        "offset": offset,
+                    },
+                )
+            except LookupFailure as exc:
+                if exc.code not in {"not_found", "access_denied"}:
+                    raise
+                # Older/public venue searches use API v1's title search route.
+                notes, count = self._notes(
+                    context,
+                    V1,
+                    "/notes/search",
+                    {"term": query.title, "limit": 20, "offset": offset},
+                )
+            yield from self._records(notes)
+            offset += len(notes)
+            if (count is not None and offset >= count) or (count is None and len(notes) < 20):
+                break
+            if not notes:
+                raise LookupFailure("incomplete_search", "OpenReview pagination stopped early")
+
+    def _candidate(self, note):
+        values = content(note)
+        original = note.get("details", {}).get("original")
+        if isinstance(original, dict):
+            values = {**content(original), **values}
+            if content(original).get("authors"):
+                values["authors"] = content(original)["authors"]
+        identifier = note.get("id")
+        if not identifier or not values.get("title"):
+            raise LookupFailure("invalid_response", "OpenReview paper needs note ID and title")
+        status, venue, year, proof = self._qualification(note, values)
+        authors = values.get("authors") or []
+        if not isinstance(authors, list) or any(not isinstance(a, str) for a in authors):
+            raise LookupFailure("invalid_response", "OpenReview authors must be a public list")
+        authors = [a for a in authors if a.casefold() not in {"anonymous", "anonymous authors"}]
+        ids = {"openreview": identifier}
+        if values.get("doi"):
+            ids["doi"] = doi(values["doi"])
+        provenance = {
+            "source": f"https://openreview.net/forum?id={identifier}",
+            "publication_status": proof,
+            "venueid": values.get("venueid") or "",
+        }
+        for key in ("cdate", "mdate", "pdate", "odate", "version"):
+            if note.get(key) is not None:
+                provenance[key] = str(note[key])
+        return Candidate.from_record(
+            {
+                "title": values["title"],
+                "authors": [name_parts(a) for a in authors],
+                "year": year,
+                "venue": venue,
+                "identifiers": ids,
+                "url": f"https://openreview.net/forum?id={identifier}",
+                "record_type": "publication" if status == "accepted" else "unknown",
+                "publication_status": status,
+                "version": str(note.get("version")) if note.get("version") else None,
+            },
+            provenance=provenance,
+        )
+
+    def _public_decision(self, note, match, base, status, proof):
+        for reply in note.get("details", {}).get("directReplies", []):
+            invitations = reply.get("invitations") or [reply.get("invitation", "")]
+            decision = content(reply).get("decision", "")
+            if reply.get("forum") != note.get("forum", note.get("id")):
+                continue
+            if not match or not any(
+                re.fullmatch(
+                    re.escape(f"{base}/{match[2]}/Conference") + r"(?:/Paper\d+)?/-/Decision", i
+                )
+                for i in invitations
+            ):
+                continue
+            if isinstance(decision, str) and re.fullmatch(r"Accept(?: \([^()]+\))?", decision):
+                status, proof = "accepted", f"public decision note: {reply.get('id', '')}"
+            elif decision == "Reject":
+                status, proof = "rejected", f"public decision note: {reply.get('id', '')}"
+        return status, proof
+
     def identifier(self, query):
         supported_url(query, self.descriptor.allowed_hosts)
         parsed = urlsplit(query.input_url)
@@ -77,22 +195,7 @@ class OpenReviewProvider:
             elif suffix in {"Submission", "Submitted"}:
                 status, proof = "submitted", f"venueid: {venueid}"
         if qualified and status in {"unknown", "submitted"}:
-            for reply in note.get("details", {}).get("directReplies", []):
-                invitations = reply.get("invitations") or [reply.get("invitation", "")]
-                decision = content(reply).get("decision", "")
-                if reply.get("forum") != note.get("forum", note.get("id")):
-                    continue
-                if not match or not any(
-                    re.fullmatch(
-                        re.escape(f"{base}/{match[2]}/Conference") + r"(?:/Paper\d+)?/-/Decision", i
-                    )
-                    for i in invitations
-                ):
-                    continue
-                if isinstance(decision, str) and re.fullmatch(r"Accept(?: \([^()]+\))?", decision):
-                    status, proof = "accepted", f"public decision note: {reply.get('id', '')}"
-                elif decision == "Reject":
-                    status, proof = "rejected", f"public decision note: {reply.get('id', '')}"
+            status, proof = self._public_decision(note, match, base, status, proof)
         year = values.get("year")
         if not year and match and status == "accepted":
             year = match[2]
@@ -110,45 +213,7 @@ class OpenReviewProvider:
                 for i in invitations
             ):
                 continue
-            values = content(note)
-            original = note.get("details", {}).get("original")
-            if isinstance(original, dict):
-                values = {**content(original), **values}
-                if content(original).get("authors"):
-                    values["authors"] = content(original)["authors"]
-            identifier = note.get("id")
-            if not identifier or not values.get("title"):
-                raise LookupFailure("invalid_response", "OpenReview paper needs note ID and title")
-            status, venue, year, proof = self._qualification(note, values)
-            authors = values.get("authors") or []
-            if not isinstance(authors, list) or any(not isinstance(a, str) for a in authors):
-                raise LookupFailure("invalid_response", "OpenReview authors must be a public list")
-            authors = [a for a in authors if a.casefold() not in {"anonymous", "anonymous authors"}]
-            ids = {"openreview": identifier}
-            if values.get("doi"):
-                ids["doi"] = doi(values["doi"])
-            provenance = {
-                "source": f"https://openreview.net/forum?id={identifier}",
-                "publication_status": proof,
-                "venueid": values.get("venueid") or "",
-            }
-            for key in ("cdate", "mdate", "pdate", "odate", "version"):
-                if note.get(key) is not None:
-                    provenance[key] = str(note[key])
-            yield Candidate.from_record(
-                {
-                    "title": values["title"],
-                    "authors": [name_parts(a) for a in authors],
-                    "year": year,
-                    "venue": venue,
-                    "identifiers": ids,
-                    "url": f"https://openreview.net/forum?id={identifier}",
-                    "record_type": "publication" if status == "accepted" else "unknown",
-                    "publication_status": status,
-                    "version": str(note.get("version")) if note.get("version") else None,
-                },
-                provenance=provenance,
-            )
+            yield self._candidate(note)
 
     def _notes(self, context, base, path, params):
         data = context.json(base + path, params=params, page=True)
@@ -178,45 +243,12 @@ class OpenReviewProvider:
                 if not builder.complete or direct_matches(query, builder.candidates):
                     return builder.result()
         if query.title:
-
-            def discover():
-                offset = 0
-                while True:
-                    try:
-                        notes, count = self._notes(
-                            context,
-                            V2,
-                            "/notes/search",
-                            {
-                                "term": query.title,
-                                "type": "terms",
-                                "content": "title",
-                                "limit": 20,
-                                "offset": offset,
-                            },
-                        )
-                    except LookupFailure as exc:
-                        if exc.code not in {"not_found", "access_denied"}:
-                            raise
-                        # Older/public venue searches use API v1's title search route.
-                        notes, count = self._notes(
-                            context,
-                            V1,
-                            "/notes/search",
-                            {"term": query.title, "limit": 20, "offset": offset},
-                        )
-                    yield from self._records(notes)
-                    offset += len(notes)
-                    if (count is not None and offset >= count) or (
-                        count is None and len(notes) < 20
-                    ):
-                        break
-                    if not notes:
-                        raise LookupFailure(
-                            "incomplete_search", "OpenReview pagination stopped early"
-                        )
-
-            builder.run("title", V2 + "/notes/search", query.title, discover)
+            builder.run(
+                "title",
+                V2 + "/notes/search",
+                query.title,
+                lambda: self._discover_title(query, context),
+            )
             venue = normalize(query.venue)
             series = next(
                 (
@@ -234,32 +266,10 @@ class OpenReviewProvider:
                 for year in years(query)[:1]:
                     venueid = "TMLR" if series == "TMLR" else f"{series}/{year}/Conference"
 
-                    def venue_search(venueid=venueid):
-                        offset = 0
-                        while True:
-                            notes, count = self._notes(
-                                context,
-                                V2,
-                                "/notes",
-                                {
-                                    "content.venueid": venueid,
-                                    "details": "directReplies,original",
-                                    "limit": 20,
-                                    "offset": offset,
-                                },
-                            )
-                            for candidate in self._records(notes):
-                                if shortlisted(query, candidate.title or ""):
-                                    yield candidate
-                            offset += len(notes)
-                            if (count is not None and offset >= count) or (
-                                count is None and len(notes) < 20
-                            ):
-                                break
-                            if not notes:
-                                raise LookupFailure(
-                                    "incomplete_search", "OpenReview venue pagination stopped early"
-                                )
-
-                    builder.run("venue", venueid, query.title, venue_search)
+                    builder.run(
+                        "venue",
+                        venueid,
+                        query.title,
+                        lambda venueid=venueid: self._discover_venue(query, context, venueid),
+                    )
         return builder.result()

@@ -47,145 +47,9 @@ def _http_error_message(response):
 
 
 class MetadataClient:
-    def __init__(
-        self, cache_dir: Path, *, refresh=False, timeout=20, transport=None, verbose=False
+    def _request_with_retries(
+        self, request, host, method, key, public_url, evidence, policy, budget
     ):
-        self.cache_dir = Path(cache_dir)
-        self.cache = ResponseCache(self.cache_dir)
-        self.citation_key = "_unscoped"
-        self.method = None
-        self.refresh = refresh
-        self.verbose = verbose
-        self.client = httpx.Client(
-            timeout=timeout,
-            transport=transport,
-            follow_redirects=False,
-            headers={"User-Agent": "bib-lint/0.1 (reference verification)"},
-        )
-        self.last_request = {}
-        self.evidence = []
-        self.progress = None
-
-    def emit(self, message):
-        if self.progress:
-            self.progress(message)
-
-    def close(self):
-        self.client.close()
-
-    def dump_response(
-        self,
-        request,
-        *,
-        body=None,
-        status=None,
-        headers=None,
-        reason=None,
-        cached=False,
-        attempt=None,
-        error=None,
-    ):
-        if not self.verbose:
-            return
-        try:
-            payload = json.loads(body) if body is not None else None
-        except ValueError:
-            payload = body
-        event = {
-            "url": str(request.url.copy_remove_param("api_key")),
-            "cached": cached,
-            "attempt": attempt,
-            "status_code": status,
-            "reason": reason,
-            "headers": headers,
-            "body": payload,
-        }
-        if error is not None:
-            event["error"] = error
-        secrets = [request.url.params.get("api_key"), request.headers.get("x-api-key")]
-        authorization = request.headers.get("authorization")
-        if authorization:
-            secrets.extend([authorization, authorization.removeprefix("Bearer ")])
-
-        def redact(value):
-            if isinstance(value, dict):
-                return {
-                    key: "[redacted]"
-                    if key.lower()
-                    in {"authorization", "api_key", "x-api-key", "set-cookie", "cookie"}
-                    else redact(item)
-                    for key, item in value.items()
-                }
-            if isinstance(value, list):
-                return [redact(item) for item in value]
-            if isinstance(value, str):
-                for secret in secrets:
-                    if secret:
-                        value = value.replace(secret, "[redacted]").replace(
-                            quote(secret, safe=""), "[redacted]"
-                        )
-            return value
-
-        content_type = (headers or {}).get("content-type", "").lower()
-        is_markup = isinstance(body, str) and (
-            "html" in content_type or "xml" in content_type or body.lstrip().startswith("<")
-        )
-        if is_markup:
-            safe = redact(event)
-            lines = [
-                f"Response: HTTP {status} {reason or ''}".rstrip(),
-                f"URL: {safe['url']}",
-                f"Cached: {cached}; attempt: {attempt}",
-            ]
-            lines.extend(f"{key}: {value}" for key, value in (safe["headers"] or {}).items())
-            self.emit("\n".join(lines) + "\n\n" + redact(body))
-        else:
-            self.emit("Response:\n" + json.dumps(redact(event), ensure_ascii=False, indent=2))
-
-    def get(self, url, *, params=None, headers=None, allowed_hosts=None, policy=None, budget=None):
-        host = urlsplit(url).hostname
-        if allowed_hosts is not None and host not in allowed_hosts:
-            raise LookupFailure("unsupported_host", "Redirect or URL is outside supported sites")
-        request = self.client.build_request("GET", url, params=params, headers=headers)
-        if policy is not None:
-            request.extensions["timeout"] = dict.fromkeys(
-                ("connect", "read", "write", "pool"), policy.timeout
-            )
-        # Credentials affect neither the public record identity nor the persisted evidence.
-        public_url = str(request.url.copy_remove_param("api_key"))
-        key = hashlib.sha256(public_url.encode()).hexdigest()
-        method = self.method or host or "unknown"
-        saved = None if self.refresh else self.cache.load(self.citation_key, method, key)
-        if saved is not None:
-            raw, metadata = saved
-            body = raw.decode(metadata.get("encoding", "utf-8"), errors="replace")
-            self.evidence.append(
-                {
-                    "url": public_url,
-                    "retrieved_at": metadata["retrieved_at"],
-                    "cached": True,
-                    "cache_key": key,
-                    "cache_file": metadata["path"],
-                    "sha256": metadata["sha256"],
-                }
-            )
-            self.emit("Using checksum-verified cached response")
-            self.dump_response(
-                request,
-                body=body,
-                status=200,
-                cached=True,
-                reason=metadata.get("reason"),
-                headers=metadata.get("headers"),
-            )
-            return body
-        evidence = {
-            "url": public_url,
-            "requested_at": datetime.now(UTC).isoformat(),
-            "cached": False,
-            "attempts": 0,
-        }
-        self.evidence.append(evidence)
         interval = policy.interval if policy else 1.0
         backoffs = policy.backoffs if policy else (2, 4)
         max_delay = policy.max_retry_after if policy else 10
@@ -242,6 +106,130 @@ class MetadataClient:
                 time.sleep(max(0, delay))
                 continue
             break
+        return response, metadata
+
+    def _cached_response(self, saved, public_url, key, request):
+        raw, metadata = saved
+        body = raw.decode(metadata.get("encoding", "utf-8"), errors="replace")
+        self.evidence.append(
+            {
+                "url": public_url,
+                "retrieved_at": metadata["retrieved_at"],
+                "cached": True,
+                "cache_key": key,
+                "cache_file": metadata["path"],
+                "sha256": metadata["sha256"],
+            }
+        )
+        self.emit("Using checksum-verified cached response")
+        self.dump_response(
+            request,
+            body=body,
+            status=200,
+            cached=True,
+            reason=metadata.get("reason"),
+            headers=metadata.get("headers"),
+        )
+        return body
+
+    def __init__(
+        self, cache_dir: Path, *, refresh=False, timeout=20, transport=None, verbose=False
+    ):
+        self.cache_dir = Path(cache_dir)
+        self.cache = ResponseCache(self.cache_dir)
+        self.citation_key = "_unscoped"
+        self.method = None
+        self.refresh = refresh
+        self.verbose = verbose
+        self.client = httpx.Client(
+            timeout=timeout,
+            transport=transport,
+            follow_redirects=False,
+            headers={"User-Agent": "bib-lint/0.1 (reference verification)"},
+        )
+        self.last_request = {}
+        self.evidence = []
+        self.progress = None
+
+    def emit(self, message):
+        if self.progress:
+            self.progress(message)
+
+    def close(self):
+        self.client.close()
+
+    def dump_response(
+        self,
+        request,
+        *,
+        body=None,
+        status=None,
+        headers=None,
+        reason=None,
+        cached=False,
+        attempt=None,
+        error=None,
+    ):
+        if not self.verbose:
+            return
+        try:
+            payload = json.loads(body) if body is not None else None
+        except ValueError:
+            payload = body
+        event = {
+            "url": str(request.url.copy_remove_param("api_key")),
+            "cached": cached,
+            "attempt": attempt,
+            "status_code": status,
+            "reason": reason,
+            "headers": headers,
+            "body": payload,
+        }
+        if error is not None:
+            event["error"] = error
+        redact = _redactor(request)
+        content_type = (headers or {}).get("content-type", "").lower()
+        is_markup = isinstance(body, str) and (
+            "html" in content_type or "xml" in content_type or body.lstrip().startswith("<")
+        )
+        if is_markup:
+            safe = redact(event)
+            lines = [
+                f"Response: HTTP {status} {reason or ''}".rstrip(),
+                f"URL: {safe['url']}",
+                f"Cached: {cached}; attempt: {attempt}",
+            ]
+            lines.extend(f"{key}: {value}" for key, value in (safe["headers"] or {}).items())
+            self.emit("\n".join(lines) + "\n\n" + redact(body))
+        else:
+            self.emit("Response:\n" + json.dumps(redact(event), ensure_ascii=False, indent=2))
+
+    def get(self, url, *, params=None, headers=None, allowed_hosts=None, policy=None, budget=None):
+        host = urlsplit(url).hostname
+        if allowed_hosts is not None and host not in allowed_hosts:
+            raise LookupFailure("unsupported_host", "Redirect or URL is outside supported sites")
+        request = self.client.build_request("GET", url, params=params, headers=headers)
+        if policy is not None:
+            request.extensions["timeout"] = dict.fromkeys(
+                ("connect", "read", "write", "pool"), policy.timeout
+            )
+        # Credentials affect neither the public record identity nor the persisted evidence.
+        public_url = str(request.url.copy_remove_param("api_key"))
+        key = hashlib.sha256(public_url.encode()).hexdigest()
+        method = self.method or host or "unknown"
+        saved = None if self.refresh else self.cache.load(self.citation_key, method, key)
+        if saved is not None:
+            return self._cached_response(saved, public_url, key, request)
+        evidence = {
+            "url": public_url,
+            "requested_at": datetime.now(UTC).isoformat(),
+            "cached": False,
+            "attempts": 0,
+        }
+        self.evidence.append(evidence)
+        response, metadata = self._request_with_retries(
+            request, host, method, key, public_url, evidence, policy, budget
+        )
         if response.status_code == 404:
             raise LookupFailure("not_found", _http_error_message(response))
         if response.status_code == 429:
@@ -267,3 +255,30 @@ class MetadataClient:
             return json.loads(self.get(url, **kwargs))
         except json.JSONDecodeError as exc:
             raise LookupFailure("invalid_response", "Provider did not return valid JSON") from exc
+
+
+def _redactor(request):
+    secrets = [request.url.params.get("api_key"), request.headers.get("x-api-key")]
+    authorization = request.headers.get("authorization")
+    if authorization:
+        secrets.extend([authorization, authorization.removeprefix("Bearer ")])
+
+    def redact(value):
+        if isinstance(value, dict):
+            return {
+                key: "[redacted]"
+                if key.lower() in {"authorization", "api_key", "x-api-key", "set-cookie", "cookie"}
+                else redact(item)
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [redact(item) for item in value]
+        if isinstance(value, str):
+            for secret in secrets:
+                if secret:
+                    value = value.replace(secret, "[redacted]").replace(
+                        quote(secret, safe=""), "[redacted]"
+                    )
+        return value
+
+    return redact

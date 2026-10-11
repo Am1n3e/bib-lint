@@ -86,42 +86,14 @@ def prepare(name, root, client=None):
         "files": {},
         "retrieved_at": datetime.now(UTC).isoformat(),
     }
-    urls = {}
-    if name == "hallmark":
-        urls = {
-            f"{split}.jsonl": f"{HALLMARK_BASE}/data/v1.2/{split}.jsonl" for split in spec["splits"]
-        }
-        urls.update(
-            {
-                "LICENSE": f"{HALLMARK_BASE}/LICENSE",
-                "README.md": f"{HALLMARK_BASE}/README.md",
-                "metadata.json": f"{HALLMARK_BASE}/data/v1.2/metadata.json",
-            }
-        )
-    elif name == "zenodo":
-        base = f"https://zenodo.org/api/records/{ZENODO_RECORD}/files"
-        urls = {
-            filename: f"{base}/{filename}/content"
-            for filename in ["manual_reference_verification_dataset.csv", "README.md"]
-        }
-    elif name == "gptzero":
-        urls = {
-            "references.csv": f"https://docs.google.com/spreadsheets/d/{GPTZERO_SHEET}"
-            "/export?format=csv&gid=0"
-        }
-    elif name == "hallucitation":
-        urls = {"appendix.html": "https://arxiv.org/html/2601.18724v1"}
+    urls = _source_urls(name, spec)
     own_client = client is None
     client = client or httpx.Client(timeout=60, follow_redirects=True)
     try:
         for filename, url in urls.items():
             response = client.get(url)
             response.raise_for_status()
-            if name != "hallucitation" and "text/html" in response.headers.get("content-type", ""):
-                raise ValueError(f"Expected data, received HTML from {url}")
-            if filename.endswith(".jsonl"):
-                for line in response.text.splitlines():
-                    json.loads(line)
+            _validate_download(name, url, filename, response)
             path = folder / filename
             if path.exists() and path.read_bytes() != response.content:
                 raise ValueError(f"Refusing to replace an existing snapshot: {path}")
@@ -185,18 +157,7 @@ def load_cases(name, split, root):
     if split not in BENCHMARKS[name]["splits"]:
         raise ValueError(f"Unknown split {split!r} for {name}")
     if name == "hallucitation":
-        cases = []
-        for row in load_appendix((folder / "appendix.html").read_bytes()):
-            for index, raw in enumerate(row["references"], 1):
-                key = f"hallucitation_{row['row_number']:03d}"
-                if len(row["references"]) > 1:
-                    key += f"_r{index}"
-                cases.append(
-                    Case(
-                        key, name, split, {**row, "reference_index": index}, True, raw_reference=raw
-                    )
-                )
-        return cases
+        return _appendix_cases(folder, name, split)
     if name == "hallmark":
         rows = read_jsonl(folder / f"{split}.jsonl")
         # The official loader excludes canaries, and nothing else. Do not deduplicate,
@@ -249,3 +210,53 @@ def load_cases(name, split, root):
         )
         for i, row in enumerate(rows, 1)
     ]
+
+
+def _source_urls(name, spec):
+    urls = {}
+    if name == "hallmark":
+        urls = {
+            f"{split}.jsonl": f"{HALLMARK_BASE}/data/v1.2/{split}.jsonl" for split in spec["splits"]
+        }
+        urls.update(
+            {
+                "LICENSE": f"{HALLMARK_BASE}/LICENSE",
+                "README.md": f"{HALLMARK_BASE}/README.md",
+                "metadata.json": f"{HALLMARK_BASE}/data/v1.2/metadata.json",
+            }
+        )
+    elif name == "zenodo":
+        base = f"https://zenodo.org/api/records/{ZENODO_RECORD}/files"
+        urls = {
+            filename: f"{base}/{filename}/content"
+            for filename in ["manual_reference_verification_dataset.csv", "README.md"]
+        }
+    elif name == "gptzero":
+        urls = {
+            "references.csv": f"https://docs.google.com/spreadsheets/d/{GPTZERO_SHEET}"
+            "/export?format=csv&gid=0"
+        }
+    elif name == "hallucitation":
+        urls = {"appendix.html": "https://arxiv.org/html/2601.18724v1"}
+    return urls
+
+
+def _validate_download(name, url, filename, response):
+    if name != "hallucitation" and "text/html" in response.headers.get("content-type", ""):
+        raise ValueError(f"Expected data, received HTML from {url}")
+    if filename.endswith(".jsonl"):
+        for line in response.text.splitlines():
+            json.loads(line)
+
+
+def _appendix_cases(folder, name, split):
+    cases = []
+    for row in load_appendix((folder / "appendix.html").read_bytes()):
+        for index, raw in enumerate(row["references"], 1):
+            key = f"hallucitation_{row['row_number']:03d}"
+            if len(row["references"]) > 1:
+                key += f"_r{index}"
+            cases.append(
+                Case(key, name, split, {**row, "reference_index": index}, True, raw_reference=raw)
+            )
+    return cases

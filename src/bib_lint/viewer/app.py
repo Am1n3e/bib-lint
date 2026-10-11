@@ -242,71 +242,8 @@ def detail(item, cache_dir):
     )
     comparison, responses, raw_log = tabs[:3]
     if review:
-        with tabs[3]:
-            st.badge(review["status"], color=STATUS_COLORS[review["status"]])
-            st.write(review["summary"])
-            st.caption(
-                f"Reviewed {review['reviewed_at']} · Checked: "
-                + ", ".join(review.get("checked_fields", []))
-            )
-            for evidence in review["evidence"]:
-                st.link_button(evidence.get("title", "Primary evidence"), evidence["url"])
-                if evidence["supports"] != review["summary"]:
-                    st.write(evidence["supports"])
-            if review.get("limitations"):
-                st.caption(review["limitations"])
-    with comparison:
-        if review and review["status"] != summary["Status"]:
-            st.info(
-                f"Agent assessment: {review['status']}; automated assessment: {summary['Status']}. "
-                "See Agent evidence before applying automated suggestions."
-            )
-        st.subheader("Your entry")
-        st.json(item["entry"], expanded=2)
-        st.subheader("Suggested corrections")
-        proposed = suggestions(item)
-        if proposed:
-            st.dataframe(proposed, hide_index=True, width="stretch")
-            st.caption("Proposals only; the bibliography is not modified.")
-        else:
-            st.caption("No confirmed correction to propose from the available evidence.")
-        st.subheader("Diff")
-        if not result and not review:
-            st.info("This reference has not been verified.")
-        else:
-            st.caption((result or {}).get("reason", ""))
-            show_matches = st.toggle("Include matching fields")
-            rows = comparison_rows(item, show_matches)
-            if rows:
-                st.table(
-                    wrapped_status_rows(rows),
-                    hide_index=True,
-                    hide_header=False,
-                    width="stretch",
-                )
-            else:
-                st.info("No field differences available.")
-            st.subheader("Resolved Sources")
-            st.dataframe(
-                source_rows(methods)
-                + (
-                    [
-                        {
-                            "Source": "agent",
-                            "Status": [review["status"]],
-                            "URL": review["evidence"][0]["url"],
-                            "Error": "",
-                            "Revision": "",
-                            "Search scope": "",
-                        }
-                    ]
-                    if review
-                    else []
-                ),
-                hide_index=True,
-                width="stretch",
-                column_config={"URL": st.column_config.LinkColumn(), "Status": status_column()},
-            )
+        _agent_panel(tabs[3], review)
+    _comparison_panel(comparison, item, review, summary, result, methods)
     with responses:
         response_view(item, cache_dir)
     with raw_log:
@@ -369,6 +306,77 @@ def main():
             st.rerun()
         return
     detail(item, cache_dir)
+
+
+def _agent_panel(tab, review):
+    with tab:
+        st.badge(review["status"], color=STATUS_COLORS[review["status"]])
+        st.write(review["summary"])
+        st.caption(
+            f"Reviewed {review['reviewed_at']} · Checked: "
+            + ", ".join(review.get("checked_fields", []))
+        )
+        for evidence in review["evidence"]:
+            st.link_button(evidence.get("title", "Primary evidence"), evidence["url"])
+            if evidence["supports"] != review["summary"]:
+                st.write(evidence["supports"])
+        if review.get("limitations"):
+            st.caption(review["limitations"])
+
+
+def _comparison_panel(comparison, item, review, summary, result, methods):
+    with comparison:
+        if review and review["status"] != summary["Status"]:
+            st.info(
+                f"Agent assessment: {review['status']}; automated assessment: {summary['Status']}. "
+                "See Agent evidence before applying automated suggestions."
+            )
+        st.subheader("Your entry")
+        st.json(item["entry"], expanded=2)
+        st.subheader("Suggested corrections")
+        proposed = suggestions(item)
+        if proposed:
+            st.dataframe(proposed, hide_index=True, width="stretch")
+            st.caption("Proposals only; the bibliography is not modified.")
+        else:
+            st.caption("No confirmed correction to propose from the available evidence.")
+        st.subheader("Diff")
+        if not result and not review:
+            st.info("This reference has not been verified.")
+        else:
+            st.caption((result or {}).get("reason", ""))
+            show_matches = st.toggle("Include matching fields")
+            rows = comparison_rows(item, show_matches)
+            if rows:
+                st.table(
+                    wrapped_status_rows(rows),
+                    hide_index=True,
+                    hide_header=False,
+                    width="stretch",
+                )
+            else:
+                st.info("No field differences available.")
+            st.subheader("Resolved Sources")
+            st.dataframe(
+                source_rows(methods)
+                + (
+                    [
+                        {
+                            "Source": "agent",
+                            "Status": [review["status"]],
+                            "URL": review["evidence"][0]["url"],
+                            "Error": "",
+                            "Revision": "",
+                            "Search scope": "",
+                        }
+                    ]
+                    if review
+                    else []
+                ),
+                hide_index=True,
+                width="stretch",
+                column_config={"URL": st.column_config.LinkColumn(), "Status": status_column()},
+            )
 
 
 if __name__ == "__main__":

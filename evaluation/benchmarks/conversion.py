@@ -51,30 +51,10 @@ def parse_raw_reference(raw):
     apa = re.match(r"^(.*?)\s*\(((?:19|20)\d{2})[^)]*\)\.\s*(.+)$", text)
     acl = re.match(r"^(.*?)\.\s+((?:19|20)\d{2})[a-z]?\.\s+(.+)$", text)
     boundary_pattern = r"(?<![A-Z])\.(?:\s+|(?=[A-Z](?:[a-z]|\s+[a-z])))"
-    if apa and re.search(boundary_pattern, apa[1].rstrip(". ")):
-        apa = None
-    if acl:
-        authors, year, rest = acl.groups()
-        apa = None
-    elif quoted:
-        authors, title, tail = quoted.groups()
-        rest = title.rstrip(", ") + ". " + tail
-        apa = None
-    elif apa:
-        authors, year, rest = apa.groups()
-        if rest.startswith(("https://", "http://")):
-            # Standards sometimes put the title before the parenthesized year,
-            # with no author. Preserve that absence rather than invent a creator.
-            return "misc", {"title": authors.strip(), "year": year, "url": rest.rstrip("., ")}
-    else:
-        springer = re.match(r"^(.*[A-Z]\.):\s+(.+)$", text)
-        if springer:
-            authors, rest = springer.groups()
-        else:
-            boundary = re.search(boundary_pattern, text)
-            if boundary is None:
-                raise ValueError("Cannot identify author/title boundary")
-            authors, rest = text[: boundary.start()], text[boundary.end() :]
+    parts = _citation_parts(text, apa, acl, quoted, boundary_pattern)
+    if isinstance(parts, dict):
+        return "misc", parts
+    authors, year, rest, apa = parts
     author = _authors(authors, apa=bool(apa) or bool(re.search(r",\s*[A-Z]\.\s*,", authors)))
     if not apa and not acl:
         before_identifiers = re.split(
@@ -95,48 +75,14 @@ def parse_raw_reference(raw):
     fields = {"title": title, "author": author}
     if year:
         fields["year"] = year
-    kind = "misc"
-    if len(parts) > 1:
-        venue = re.sub(r"^In[: ]+", "", parts[1])
-        # Editors, publication year, volume and publisher/address prose are
-        # separate citation components rather than part of a venue's name.
-        venue = re.sub(r"^.*?\((?:eds?\.|editors?)\),?\s*", "", venue, flags=re.I)
-        venue = re.sub(r"\.\s+(?:19|20)\d{2}\.?$", "", venue)
-        venue = re.split(
-            r"\.\s+(?:Association for|European Language|Publisher:|Ed\. by)", venue, maxsplit=1
-        )[0]
-        venue = re.split(r",\s*(?:pages|pp?\.|volume|\d)|\s+doi:", venue, maxsplit=1)[0]
-        venue = re.sub(r"\s*\((?:[A-Za-z. ]*\s)?(?:19|20)\d{2}\).*", "", venue)
-        venue = venue.strip().rstrip(".")
-        if venue:
-            conference = bool(re.search(r"Proceedings|Conference|Workshop", venue))
-            if not conference:
-                volume = re.search(r"\s+(\d+)(?:\.(\d+)|\((\d+)\))?$", venue)
-                if volume:
-                    fields["volume"] = volume[1]
-                    if volume[2] or volume[3]:
-                        fields["number"] = volume[2] or volume[3]
-                    venue = venue[: volume.start()].rstrip()
-            kind = "inproceedings" if conference else "article"
-            fields["booktitle" if conference else "journal"] = venue
+    kind = _venue_fields(parts, fields)
     # Hosting on arXiv does not justify replacing the venue claimed in a citation.
     if re.search(r"\barXiv\b", rest, re.I):
         venue = fields.get("journal", "")
         if not fields.get("booktitle") and (not venue or "arxiv" in venue.lower()):
             kind = "article"
             fields["journal"] = "arXiv"
-    url = re.search(r"https?://\S+", text)
-    if url:
-        fields["url"] = url.group().rstrip(".,")
-    doi = re.search(r"(?:doi\s*:\s*|doi\.org/)(10\.\d{4,9}/\S+)", text, re.I)
-    if doi:
-        fields["doi"] = doi.group(1).rstrip(".,")
-    arxiv = re.search(
-        r"(?:arxiv\s*:\s*|arxiv\.org/(?:abs|pdf)/)(\d{4}\.[\dXx]+(?:v\d+)?)", text, re.I
-    )
-    if arxiv:
-        fields["eprint"] = arxiv.group(1)
-        fields["archiveprefix"] = "arXiv"
+    _identifier_fields(text, fields)
     return kind, fields
 
 
@@ -172,3 +118,75 @@ def make_report(case):
         "entry": asdict(entry),
     }
     return report, conversion
+
+
+def _venue_fields(parts, fields):
+    kind = "misc"
+    if len(parts) > 1:
+        venue = re.sub(r"^In[: ]+", "", parts[1])
+        # Editors, publication year, volume and publisher/address prose are
+        # separate citation components rather than part of a venue's name.
+        venue = re.sub(r"^.*?\((?:eds?\.|editors?)\),?\s*", "", venue, flags=re.I)
+        venue = re.sub(r"\.\s+(?:19|20)\d{2}\.?$", "", venue)
+        venue = re.split(
+            r"\.\s+(?:Association for|European Language|Publisher:|Ed\. by)", venue, maxsplit=1
+        )[0]
+        venue = re.split(r",\s*(?:pages|pp?\.|volume|\d)|\s+doi:", venue, maxsplit=1)[0]
+        venue = re.sub(r"\s*\((?:[A-Za-z. ]*\s)?(?:19|20)\d{2}\).*", "", venue)
+        venue = venue.strip().rstrip(".")
+        if venue:
+            conference = bool(re.search(r"Proceedings|Conference|Workshop", venue))
+            if not conference:
+                volume = re.search(r"\s+(\d+)(?:\.(\d+)|\((\d+)\))?$", venue)
+                if volume:
+                    fields["volume"] = volume[1]
+                    if volume[2] or volume[3]:
+                        fields["number"] = volume[2] or volume[3]
+                    venue = venue[: volume.start()].rstrip()
+            kind = "inproceedings" if conference else "article"
+            fields["booktitle" if conference else "journal"] = venue
+    return kind
+
+
+def _identifier_fields(text, fields):
+    url = re.search(r"https?://\S+", text)
+    if url:
+        fields["url"] = url.group().rstrip(".,")
+    doi = re.search(r"(?:doi\s*:\s*|doi\.org/)(10\.\d{4,9}/\S+)", text, re.I)
+    if doi:
+        fields["doi"] = doi.group(1).rstrip(".,")
+    arxiv = re.search(
+        r"(?:arxiv\s*:\s*|arxiv\.org/(?:abs|pdf)/)(\d{4}\.[\dXx]+(?:v\d+)?)", text, re.I
+    )
+    if arxiv:
+        fields["eprint"] = arxiv.group(1)
+        fields["archiveprefix"] = "arXiv"
+
+
+def _citation_parts(text, apa, acl, quoted, boundary_pattern):
+    year = None
+    if apa and re.search(boundary_pattern, apa[1].rstrip(". ")):
+        apa = None
+    if acl:
+        authors, year, rest = acl.groups()
+        apa = None
+    elif quoted:
+        authors, title, tail = quoted.groups()
+        rest = title.rstrip(", ") + ". " + tail
+        apa = None
+    elif apa:
+        authors, year, rest = apa.groups()
+        if rest.startswith(("https://", "http://")):
+            # Standards sometimes put the title before the parenthesized year,
+            # with no author. Preserve that absence rather than invent a creator.
+            return {"title": authors.strip(), "year": year, "url": rest.rstrip("., ")}
+    else:
+        springer = re.match(r"^(.*[A-Z]\.):\s+(.+)$", text)
+        if springer:
+            authors, rest = springer.groups()
+        else:
+            boundary = re.search(boundary_pattern, text)
+            if boundary is None:
+                raise ValueError("Cannot identify author/title boundary")
+            authors, rest = text[: boundary.start()], text[boundary.end() :]
+    return authors, year, rest, apa

@@ -29,39 +29,7 @@ def attach_reviews(report, path):
         raise ValueError("Unsupported agent evidence schema")
     if not isinstance(data.get("items"), list):
         raise ValueError("Agent evidence must contain an items list")
-    indexed = {}
-    for review in data["items"]:
-        key = review.get("citation_key")
-        if not isinstance(key, str) or key in indexed:
-            raise ValueError("Agent evidence has a missing or duplicate citation key")
-        if review.get("status") not in REVIEW_STATUSES:
-            raise ValueError(f"Invalid agent status for {key}")
-        for field in ("summary", "reviewed_at", "entry_sha256"):
-            if not isinstance(review.get(field), str) or not review[field]:
-                raise ValueError(f"Agent review requires {field} for {key}")
-        if not isinstance(review.get("checked_fields"), list):
-            raise ValueError(f"Agent review requires checked_fields for {key}")
-        evidence = review.get("evidence")
-        if not isinstance(evidence, list) or not evidence:
-            raise ValueError(f"Agent review requires evidence for {key}")
-        for source in evidence:
-            url = urlsplit(source.get("url", ""))
-            if url.scheme not in {"http", "https"} or not url.netloc:
-                raise ValueError(f"Invalid evidence URL for {key}")
-            if not source.get("supports"):
-                raise ValueError(f"Evidence must explain its support for {key}")
-        if not isinstance(review.get("comparisons", []), list):
-            raise ValueError(f"Invalid agent comparisons for {key}")
-        for comparison in review.get("comparisons", []):
-            if not comparison.get("field") or comparison.get("result") not in {
-                "match",
-                "mismatch",
-                "partial_match",
-                "unknown",
-                "not_checked",
-            }:
-                raise ValueError(f"Invalid agent field comparison for {key}")
-        indexed[key] = review
+    indexed = _index_reviews(data)
     warnings = []
     for item in report["items"]:
         review = indexed.pop(item["entry"].get("key"), None)
@@ -77,3 +45,49 @@ def attach_reviews(report, path):
     if indexed:
         warnings.append(f"Ignored agent evidence for {len(indexed)} keys absent from this report.")
     return warnings
+
+
+def _index_reviews(data):
+    indexed = {}
+    for review in data["items"]:
+        key = _validate_review(review, indexed)
+        indexed[key] = review
+    return indexed
+
+
+def _validate_review(review, indexed):
+    key = review.get("citation_key")
+    if not isinstance(key, str) or key in indexed:
+        raise ValueError("Agent evidence has a missing or duplicate citation key")
+    if review.get("status") not in REVIEW_STATUSES:
+        raise ValueError(f"Invalid agent status for {key}")
+    for field in ("summary", "reviewed_at", "entry_sha256"):
+        if not isinstance(review.get(field), str) or not review[field]:
+            raise ValueError(f"Agent review requires {field} for {key}")
+    if not isinstance(review.get("checked_fields"), list):
+        raise ValueError(f"Agent review requires checked_fields for {key}")
+    evidence = review.get("evidence")
+    if not isinstance(evidence, list) or not evidence:
+        raise ValueError(f"Agent review requires evidence for {key}")
+    _validate_evidence(evidence, key)
+    if not isinstance(review.get("comparisons", []), list):
+        raise ValueError(f"Invalid agent comparisons for {key}")
+    for comparison in review.get("comparisons", []):
+        if not comparison.get("field") or comparison.get("result") not in {
+            "match",
+            "mismatch",
+            "partial_match",
+            "unknown",
+            "not_checked",
+        }:
+            raise ValueError(f"Invalid agent field comparison for {key}")
+    return key
+
+
+def _validate_evidence(evidence, key):
+    for source in evidence:
+        url = urlsplit(source.get("url", ""))
+        if url.scheme not in {"http", "https"} or not url.netloc:
+            raise ValueError(f"Invalid evidence URL for {key}")
+        if not source.get("supports"):
+            raise ValueError(f"Evidence must explain its support for {key}")

@@ -117,32 +117,7 @@ def verify_reference(
         client.method = name
         start = len(client.evidence)
         context = RequestContext(client, provider.descriptor, query.citation_key)
-        try:
-            result = _source_result(provider, query, context)
-        except OSError:
-            # Evidence persistence failures are execution errors, not provider findings.
-            raise
-        except Exception as exc:
-            # One provider failing must not prevent other independent lookups.
-            code = exc.code if isinstance(exc, LookupFailure) else "invalid_response"
-            result = {
-                "name": name,
-                "status": "not_found" if code == "not_found" else "error",
-                "found_ref": None,
-                "agrees_with_consensus": None,
-                "differences": [],
-            }
-            if code != "not_found":
-                result["error"] = {
-                    "code": code,
-                    "message": str(exc) if isinstance(exc, LookupFailure) else type(exc).__name__,
-                }
-            result["lookup_provenance"] = [
-                _attempt_data(a) for a in getattr(context, "lookup_attempts", ())
-            ]
-            candidates = [c.as_record() for c in getattr(context, "retrieved_candidates", ())]
-            if candidates:
-                result["candidates"] = candidates
+        result = _execute_provider(name, provider, query, context)
         result.update(
             adapter_version=provider.descriptor.adapter_version,
             display_name=provider.descriptor.display_name,
@@ -155,13 +130,7 @@ def verify_reference(
         if checkpoint:
             checkpoint(copy.deepcopy(results))
         if progress:
-            error = result.get("error", {})
-            label = source_status(result["status"])
-            if result["status"] == "error":
-                label += f": {error.get('code', 'unknown')}"
-            if result["status"] == "error" and error.get("message"):
-                label += f" — {error['message']}"
-            progress(f"  {name}: {label}")
+            _source_progress(name, result, progress)
     client.progress = None
     return build_consensus(results)
 
@@ -264,21 +233,7 @@ def verify_report_locked(
     registry = validate_registry(METHODS if methods is None else methods)
     selected = selected_items(report, citation_key)
     used = eligible_items(report)
-    input_hash = _fingerprint(report) if report["schema_version"] == 2 else fingerprint(report)
-    run = report.get("verification_run")
-    expected = {
-        "fingerprint": input_hash,
-        "methods": list(registry),
-        "policy_version": 5,
-        "orchestration_version": 2,
-        "provider_protocol_version": 1,
-        "providers": [p.descriptor.serialize() for p in registry.values()],
-    }
-    reusable = run and all(run.get(key) == value for key, value in expected.items())
-    if not reusable or refresh:
-        for item in report["items"] if not reusable else selected:
-            item["validations"].pop("correctness", None)
-    report["verification_run"] = {**expected, "complete": False}
+    _prepare_run(report, registry, selected, refresh)
     _write_json(checkpoint, report)
     owned = client is None
     client = client or MetadataClient(Path(cache_dir), refresh=refresh, verbose=verbose)
@@ -335,3 +290,61 @@ def verify_report_locked(
     elif progress:
         progress("Other eligible references remain pending; checkpoint retained.")
     return destination if complete else checkpoint, totals
+
+
+def _execute_provider(name, provider, query, context):
+    try:
+        result = _source_result(provider, query, context)
+    except OSError:
+        # Evidence persistence failures are execution errors, not provider findings.
+        raise
+    except Exception as exc:
+        # One provider failing must not prevent other independent lookups.
+        code = exc.code if isinstance(exc, LookupFailure) else "invalid_response"
+        result = {
+            "name": name,
+            "status": "not_found" if code == "not_found" else "error",
+            "found_ref": None,
+            "agrees_with_consensus": None,
+            "differences": [],
+        }
+        if code != "not_found":
+            result["error"] = {
+                "code": code,
+                "message": str(exc) if isinstance(exc, LookupFailure) else type(exc).__name__,
+            }
+        result["lookup_provenance"] = [
+            _attempt_data(a) for a in getattr(context, "lookup_attempts", ())
+        ]
+        candidates = [c.as_record() for c in getattr(context, "retrieved_candidates", ())]
+        if candidates:
+            result["candidates"] = candidates
+    return result
+
+
+def _source_progress(name, result, progress):
+    error = result.get("error", {})
+    label = source_status(result["status"])
+    if result["status"] == "error":
+        label += f": {error.get('code', 'unknown')}"
+    if result["status"] == "error" and error.get("message"):
+        label += f" — {error['message']}"
+    progress(f"  {name}: {label}")
+
+
+def _prepare_run(report, registry, selected, refresh):
+    input_hash = _fingerprint(report) if report["schema_version"] == 2 else fingerprint(report)
+    run = report.get("verification_run")
+    expected = {
+        "fingerprint": input_hash,
+        "methods": list(registry),
+        "policy_version": 5,
+        "orchestration_version": 2,
+        "provider_protocol_version": 1,
+        "providers": [p.descriptor.serialize() for p in registry.values()],
+    }
+    reusable = run and all(run.get(key) == value for key, value in expected.items())
+    if not reusable or refresh:
+        for item in report["items"] if not reusable else selected:
+            item["validations"].pop("correctness", None)
+    report["verification_run"] = {**expected, "complete": False}

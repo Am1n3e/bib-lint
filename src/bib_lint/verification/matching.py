@@ -143,34 +143,7 @@ def compare_fields(original, found):
         state = "unknown"
         if left and right:
             if field == "authors":
-                a, b = author_names(original), author_names(found)
-                if a and a[-1] == "others" and "others" not in a[:-1]:
-                    prefix = a[:-1]
-                    if prefix and len(b) > len(prefix) and prefix == b[: len(prefix)]:
-                        state = "partial_match"
-                    elif len(b) < len(prefix):
-                        state = "mismatch"
-                    elif prefix:
-                        prefix_check = compare_fields(
-                            {"authors": left[:-1]}, {"authors": right[: len(prefix)]}
-                        )[1]["result"]
-                        state = "mismatch" if prefix_check == "mismatch" else "unknown"
-                elif a == b:
-                    state = "match"
-                elif len(a) != len(b) and "others" not in a:
-                    state = "mismatch"
-                elif [normalize(p.get("family")) for p in left] != [
-                    normalize(p.get("family")) for p in right
-                ]:
-                    state = "mismatch" if "others" not in a else "unknown"
-                else:
-                    for x, y in zip(left, right, strict=True):
-                        gx, gy = (
-                            normalize(x.get("given")).split(),
-                            normalize(y.get("given")).split(),
-                        )
-                        if gx and gy and gx[0][0] != gy[0][0]:
-                            state = "mismatch"
+                state = _compare_authors(original, found, left, right)
                 # Compatible initials or missing given names still require review.
             else:
                 same = normalize(left) == normalize(right)
@@ -246,3 +219,40 @@ def select_result(name, original, candidates, *, authority=False, lookup="search
     if rejected_candidates:
         result["rejected_candidates"] = rejected_candidates
     return result
+
+
+def _compare_authors(original, found, left, right):
+    state = "unknown"
+    a, b = author_names(original), author_names(found)
+    if a and a[-1] == "others" and "others" not in a[:-1]:
+        state = _compare_author_prefix(a, b, left, right)
+    elif a == b:
+        state = "match"
+    elif len(a) != len(b) and "others" not in a:
+        state = "mismatch"
+    elif [normalize(p.get("family")) for p in left] != [normalize(p.get("family")) for p in right]:
+        state = "mismatch" if "others" not in a else "unknown"
+    else:
+        for x, y in zip(left, right, strict=True):
+            gx, gy = (
+                normalize(x.get("given")).split(),
+                normalize(y.get("given")).split(),
+            )
+            if gx and gy and gx[0][0] != gy[0][0]:
+                state = "mismatch"
+    return state
+
+
+def _compare_author_prefix(a, b, left, right):
+    state = "unknown"
+    prefix = a[:-1]
+    if prefix and len(b) > len(prefix) and prefix == b[: len(prefix)]:
+        state = "partial_match"
+    elif len(b) < len(prefix):
+        state = "mismatch"
+    elif prefix:
+        prefix_check = compare_fields({"authors": left[:-1]}, {"authors": right[: len(prefix)]})[1][
+            "result"
+        ]
+        state = "mismatch" if prefix_check == "mismatch" else "unknown"
+    return state

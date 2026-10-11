@@ -11,18 +11,20 @@ OPENSPEC_VERSION = "1.14.1"
 
 
 @task(help={"openspec": "Initialize local OpenSpec planning and generated Codex skills."})
-def init(context, openspec=True):
+def dev_init(context, openspec=True):
     """Sync development dependencies, install Git hooks, and initialize local tooling."""
     with context.cd(str(ROOT)):
-        context.run("uv sync --group dev", echo=True)
+        context.run("uv sync --locked --group dev", echo=True)
         context.run("uv run --locked lefthook install pre-push", echo=True)
         if not openspec:
             return
         if not shutil.which("node") or not shutil.which("npx"):
-            raise Exit("OpenSpec needs Node.js 20.19+ and npm; use init --no-openspec to skip it.")
+            raise Exit(
+                "OpenSpec needs Node.js 20.19+ and npm; use dev_init --no-openspec to skip it."
+            )
         version = context.run("node --version", hide=True).stdout.strip().removeprefix("v")
         if tuple(int(part) for part in version.split(".")[:2]) < (20, 19):
-            raise Exit("OpenSpec needs Node.js 20.19+; use init --no-openspec to skip it.")
+            raise Exit("OpenSpec needs Node.js 20.19+; use dev_init --no-openspec to skip it.")
         context.run(
             shlex.join(
                 [

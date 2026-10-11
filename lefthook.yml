@@ -6,7 +6,7 @@ pre-push:
   parallel: false
   commands:
     formatting:
-      run: uv run --locked invoke format-check
+      run: uv run --locked invoke format_check
     lint:
       run: uv run --locked invoke lint
     complexity:

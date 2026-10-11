@@ -1,0 +1,105 @@
+name: Benchmark
+run-name: Benchmark / ${{ inputs.benchmark }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark:
+        description: Benchmark to run (all official splits)
+        required: true
+        type: choice
+        options:
+          - hallmark
+          - zenodo
+          - gptzero
+          - hallucitation
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    name: ${{ inputs.benchmark }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      BENCHMARK_NAME: ${{ inputs.benchmark }}
+      BENCHMARK_ROOT: evaluation/.artifacts/ci
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+          python-version: "3.12"
+          enable-cache: true
+      - name: Validate benchmark selection
+        run: |
+          case "$BENCHMARK_NAME" in
+            hallmark|zenodo|gptzero|hallucitation) ;;
+            *) echo "Unknown benchmark: $BENCHMARK_NAME" >&2; exit 1 ;;
+          esac
+      - name: Install locked benchmark dependencies
+        timeout-minutes: 10
+        run: uv sync --locked --dev --group benchmark
+      - name: Record run metadata
+        run: |
+          uv run --no-sync python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["BENCHMARK_ROOT"])
+          root.mkdir(parents=True, exist_ok=True)
+          metadata = {
+              "benchmark": os.environ["BENCHMARK_NAME"],
+              "commit": os.environ["GITHUB_SHA"],
+              "ref": os.environ["GITHUB_REF"],
+              "run_id": os.environ["GITHUB_RUN_ID"],
+              "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "run_url": (
+                  f'{os.environ["GITHUB_SERVER_URL"]}/{os.environ["GITHUB_REPOSITORY"]}'
+                  f'/actions/runs/{os.environ["GITHUB_RUN_ID"]}'
+              ),
+          }
+          (root / "ci-run.json").write_text(json.dumps(metadata, indent=2) + "\n")
+          PY
+      - name: Prepare selected benchmark
+        id: prepare
+        timeout-minutes: 10
+        run: uv run --no-sync invoke benchmark.init --name "$BENCHMARK_NAME" --root "$BENCHMARK_ROOT"
+      - name: Run benchmark and score
+        id: run
+        # Leave time to upload checkpointed results even if the live audit times out.
+        timeout-minutes: 330
+        run: uv run --no-sync invoke benchmark.run "$BENCHMARK_NAME" --root "$BENCHMARK_ROOT" --verbose
+      - name: Score checkpointed predictions after an interrupted run
+        if: always() && steps.prepare.outcome == 'success' && steps.run.outcome != 'success'
+        timeout-minutes: 5
+        run: uv run --no-sync invoke benchmark.score "$BENCHMARK_NAME" --root "$BENCHMARK_ROOT"
+      - name: Upload benchmark results and evidence
+        id: artifact
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: benchmark-${{ inputs.benchmark }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: evaluation/.artifacts/ci/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Link benchmark artifact
+        if: always()
+        env:
+          ARTIFACT_URL: ${{ steps.artifact.outputs.artifact-url }}
+          RUN_OUTCOME: ${{ steps.run.outcome }}
+        run: |
+          {
+            printf '### Benchmark: %s\n\n' "$BENCHMARK_NAME"
+            printf 'Run outcome: %s\n\n' "$RUN_OUTCOME"
+            if [ -n "$ARTIFACT_URL" ]; then
+              printf '[Download benchmark artifact](%s)\n\n' "$ARTIFACT_URL"
+            fi
+            printf 'Review `run-summary.json` (or `score-summary.json` after an interrupted run) and `runs/<benchmark>/<split>/evaluation.json` for scores and coverage.\n\n'
+            printf 'The artifact also contains frozen datasets, predictions, checkpoints, and per-reference audit evidence. Failed or timed-out runs may contain partial results.\n'
+          } >> "$GITHUB_STEP_SUMMARY"

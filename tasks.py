@@ -4,7 +4,9 @@ import shlex
 import shutil
 from pathlib import Path
 
-from invoke import Exit, task
+from invoke import Collection, Exit, task
+
+from evaluation import tasks as benchmark_tasks
 
 ROOT = Path(__file__).resolve().parent
 OPENSPEC_VERSION = "1.14.1"
@@ -75,3 +77,7 @@ def complexity(context):
 @task(pre=[lint, format_check, complexity])
 def check(context):
     """Run all code quality checks used by CI."""
+
+
+ns = Collection(dev_init, lint, format_check, format_code, complexity, check)
+ns.add_collection(benchmark_tasks, name="benchmark")

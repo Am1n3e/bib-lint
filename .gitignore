@@ -41,6 +41,7 @@ junit.xml
 /references.tmp.json
 *.json.lock
 .bib-lint-cache/
+evaluation/.artifacts/
 
 # Editor and OS artifacts
 .DS_Store

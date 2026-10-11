@@ -2,6 +2,7 @@
 
 import shlex
 import shutil
+import sys
 from pathlib import Path
 
 from invoke import Exit, task
@@ -39,3 +40,36 @@ def init(context, openspec=True):
             echo=True,
             env={"OPENSPEC_TELEMETRY": "0"},
         )
+
+
+@task
+def lint(context):
+    """Check Python lint rules without modifying files."""
+    with context.cd(str(ROOT)):
+        context.run("ruff check .", echo=True)
+
+
+@task
+def format_check(context):
+    """Check Ruff formatting without modifying files."""
+    with context.cd(str(ROOT)):
+        context.run("ruff format --check .", echo=True)
+
+
+@task(name="format")
+def format_code(context):
+    """Apply Ruff formatting to Python files."""
+    with context.cd(str(ROOT)):
+        context.run("ruff format .", echo=True)
+
+
+@task
+def complexity(context):
+    """Reject new complexity violations and increases above the baseline."""
+    with context.cd(str(ROOT)):
+        context.run(shlex.join([sys.executable, "-m", "scripts.check_complexity"]), echo=True)
+
+
+@task(pre=[lint, format_check, complexity])
+def check(context):
+    """Run all code quality checks used by CI."""

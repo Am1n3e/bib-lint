@@ -1,0 +1,29 @@
+{
+  "max_complexity": 10,
+  "functions": {
+    "evaluation/benchmarks/conversion.py::parse_raw_reference": 22,
+    "evaluation/benchmarks/sources.py::load_cases": 11,
+    "evaluation/benchmarks/sources.py::prepare": 13,
+    "evaluation/harness.py::main": 12,
+    "evaluation/harness.py::run_split": 23,
+    "scripts/check_baseline.py::check_case": 15,
+    "scripts/check_baseline.py::check_scores": 15,
+    "src/bib_lint/scope.py::validate_outcome": 12,
+    "src/bib_lint/scope.py::validate_report": 31,
+    "src/bib_lint/verification/__init__.py::verify_reference": 13,
+    "src/bib_lint/verification/__init__.py::verify_report_locked": 12,
+    "src/bib_lint/verification/cache.py::ResponseCache.load": 12,
+    "src/bib_lint/verification/consensus.py::build_consensus": 16,
+    "src/bib_lint/verification/http.py::MetadataClient.dump_response": 12,
+    "src/bib_lint/verification/http.py::MetadataClient.get": 17,
+    "src/bib_lint/verification/matching.py::compare_fields": 17,
+    "src/bib_lint/verification/providers/archive.py::ArchiveProvider.lookup": 12,
+    "src/bib_lint/verification/providers/openreview.py::OpenReviewProvider._qualification": 13,
+    "src/bib_lint/verification/providers/openreview.py::OpenReviewProvider._records": 12,
+    "src/bib_lint/verification/providers/openreview.py::OpenReviewProvider.lookup": 19,
+    "src/bib_lint/viewer/agent.py::attach_reviews": 21,
+    "src/bib_lint/viewer/app.py::detail": 12,
+    "src/bib_lint/viewer/controls.py::workflow_controls": 20,
+    "src/bib_lint/viewer/jobs.py::Registry._watch": 14
+  }
+}

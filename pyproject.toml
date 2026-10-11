@@ -48,6 +48,16 @@ show_missing = true
 [tool.ruff]
 target-version = "py312"
 line-length = 100
+required-version = "==0.16.9"
+force-exclude = true
+extend-exclude = ["openspec", ".agents", "evaluation/.artifacts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

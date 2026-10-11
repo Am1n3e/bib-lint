@@ -4,7 +4,7 @@ import shlex
 import shutil
 from pathlib import Path
 
-from invoke import Exit, task
+from invoke import Collection, Exit, task
 
 ROOT = Path(__file__).resolve().parent
 OPENSPEC_VERSION = "1.14.1"
@@ -78,7 +78,7 @@ def check(context):
 
 
 BENCHMARK_HELP = {
-    "benchmark": "Dataset: all, hallmark, zenodo, gptzero, or hallucitation (default: all).",
+    "name": "Dataset: all, hallmark, zenodo, gptzero, or hallucitation.",
     "root": (
         "Artifact directory; defaults to evaluation/.artifacts. "
         "Use a fresh root after code changes."
@@ -104,15 +104,16 @@ def _benchmark_harness(context, command, benchmark, split, root, extra=()):
     _benchmark_python(context, "evaluation.harness", arguments, root)
 
 
-@task(help=BENCHMARK_HELP)
-def benchmark_setup(context, benchmark="all", root=""):
+@task(help={**BENCHMARK_HELP, "name": BENCHMARK_HELP["name"] + " Defaults to all."})
+def benchmark_init(context, name="all", root=""):
     """Install the locked benchmark scorer and download or verify frozen datasets."""
     with context.cd(str(ROOT)):
         context.run("uv sync --locked --group benchmark", echo=True)
-    _benchmark_harness(context, "prepare", benchmark, "", root)
+    _benchmark_harness(context, "prepare", name, "", root)
 
 
 @task(
+    positional=["name"],
     help={
         **BENCHMARK_HELP,
         "split": SPLIT_HELP,
@@ -120,11 +121,11 @@ def benchmark_setup(context, benchmark="all", root=""):
         "workers": "Concurrent references with shared host pacing (default: 8).",
         "retry_errors": "Retry failed cases and provider errors when resuming.",
         "verbose": "Print provider progress while auditing references.",
-    }
+    },
 )
 def benchmark_run(
     context,
-    benchmark="all",
+    name,
     split="",
     root="",
     limit=0,
@@ -140,16 +141,28 @@ def benchmark_run(
         extra.append("--retry-errors")
     if verbose:
         extra.append("--verbose")
-    _benchmark_harness(context, "run", benchmark, split, root, extra)
+    _benchmark_harness(context, "run", name, split, root, extra)
 
 
-@task(help={**BENCHMARK_HELP, "split": SPLIT_HELP})
-def benchmark_score(context, benchmark="all", split="", root=""):
+@task(positional=["name"], help={**BENCHMARK_HELP, "split": SPLIT_HELP})
+def benchmark_score(context, name, split="", root=""):
     """Rescore saved predictions without contacting metadata providers."""
-    _benchmark_harness(context, "score", benchmark, split, root)
+    _benchmark_harness(context, "score", name, split, root)
 
 
 @task(help={"root": BENCHMARK_HELP["root"]})
 def benchmark_verify(context, root=""):
     """Verify every benchmark and export baseline results after full completion."""
     _benchmark_python(context, "scripts.check_baseline", [], root)
+
+
+ns = Collection(dev_init, lint, format_check, format_code, complexity, check)
+ns.add_collection(
+    Collection(
+        "benchmark",
+        init=benchmark_init,
+        run=benchmark_run,
+        score=benchmark_score,
+        verify=benchmark_verify,
+    )
+)

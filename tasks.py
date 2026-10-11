@@ -12,9 +12,10 @@ OPENSPEC_VERSION = "1.14.1"
 
 @task(help={"openspec": "Initialize local OpenSpec planning and generated Codex skills."})
 def init(context, openspec=True):
-    """Sync development dependencies and initialize ignored local tooling."""
+    """Sync development dependencies, install Git hooks, and initialize local tooling."""
     with context.cd(str(ROOT)):
         context.run("uv sync --group dev", echo=True)
+        context.run("uv run --locked lefthook install pre-push", echo=True)
         if not openspec:
             return
         if not shutil.which("node") or not shutil.which("npx"):

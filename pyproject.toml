@@ -31,6 +31,7 @@ dev = [
     "coverage>=7.10,<8",
     "ruff>=0.16.9",
     "invoke>=2.2,<3",
+    "lefthook==2.2.1",
 ]
 
 [tool.pytest.ini_options]

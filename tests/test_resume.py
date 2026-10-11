@@ -2,7 +2,7 @@ import json
 
 import httpx
 import pytest
-from test_verification import ENTRY, RECORD, FakeClient
+from support import ENTRY, RECORD, FakeClient
 
 from bib_lint.storage import report_lock
 from bib_lint.verification import verify_file
@@ -61,7 +61,7 @@ def test_interrupt_checkpoints_each_method_and_resumes(tmp_path):
     assert calls == ["first"]
     assert output == final and not source.exists()
     assert json.loads(final.read_text())["verification_run"]["complete"]
-    assert "  first: Resumed (found)" in logs
+    assert "  first: Resumed (Found)" in logs
     assert "  second: Fetching ..." in logs
     assert "  found: 2/2" in logs
     assert "  consensus: 2/2" in logs

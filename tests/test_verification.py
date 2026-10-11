@@ -3,11 +3,12 @@ import json
 
 import httpx
 import pytest
+from support import ENTRY, RECORD, FakeClient
 
 from bib_lint.verification import verify_file, verify_reference
 from bib_lint.verification.consensus import build_consensus
 from bib_lint.verification.http import LookupFailure, MetadataClient
-from bib_lint.verification.matching import input_record, normalize, select_result
+from bib_lint.verification.matching import compare_fields, input_record, normalize, select_result
 from bib_lint.verification.providers import (
     verify_reference_arxiv,
     verify_reference_crossref,
@@ -15,24 +16,6 @@ from bib_lint.verification.providers import (
     verify_reference_publisher,
     verify_reference_semantic_scholar,
 )
-
-ENTRY = {
-    "key": "Example",
-    "type": "article",
-    "fields": {
-        "title": "An Example Paper",
-        "year": "2025",
-        "journal": "Example Journal",
-        "doi": "10.1234/example",
-    },
-    "persons": {
-        "author": [
-            {"first": ["Jane"], "middle": [], "prelast": [], "last": ["Smith"], "lineage": []}
-        ]
-    },
-}
-RECORD = input_record(ENTRY)
-RECORD["url"] = "https://doi.org/10.1234/example"
 
 
 def method(name="crossref", record=None, authority=True, original=None):
@@ -108,19 +91,6 @@ def test_given_names_and_incomplete_metadata():
     wrong = {**RECORD, "authors": [{"given": "Zora", "family": "Smith"}]}
     assert build_consensus([method(record=wrong)])["is_correct"] is False
     assert normalize(r"Garc{\'i}a") == normalize("García")
-
-
-class FakeClient:
-    def __init__(self, data=None, text=None):
-        self.data = data
-        self.text = text
-        self.evidence = []
-
-    def json(self, *args, **kwargs):
-        return self.data
-
-    def get(self, *args, **kwargs):
-        return self.text
 
 
 def test_all_adapters_run_after_failure():
@@ -271,6 +241,8 @@ def test_verify_report_preserves_input_and_validations(tmp_path):
         "correct": 1,
         "incorrect": 0,
         "unresolved": 0,
+        "partial_match": 0,
+        "needs_review": 0,
         "method_errors": 0,
         "skipped_unused": 0,
     }
@@ -354,3 +326,46 @@ def test_empty_http_error_body_uses_reason(tmp_path):
     with pytest.raises(LookupFailure, match="HTTP 406: Not Acceptable"):
         client.get("https://export.arxiv.org/api/query")
     client.close()
+
+
+def test_title_difference_is_mismatch_but_missing_title_is_unknown():
+    original = {
+        **RECORD,
+        "title": 'T{"u}lu 3: Pushing Frontiers in Open Language Model Post-Training',
+    }
+    found = {**RECORD, "title": "Tulu 3: Pushing Frontiers in Open Language Model Post-Training"}
+    assert compare_fields(original, found)[0]["result"] == "mismatch"
+    result = build_consensus([method("arxiv", record=found, original=original)])
+    assert result["is_correct"] is False
+    assert compare_fields(original, {**found, "title": None})[0]["result"] == "unknown"
+    assert compare_fields(RECORD, RECORD)[0]["result"] == "match"
+
+
+def test_default_sources_exclude_semantic_scholar():
+    from bib_lint.verification.providers import METHODS
+
+    assert set(METHODS) == {"crossref", "arxiv", "openalex", "publisher"}
+
+
+def test_abbreviated_authors_partial_match_and_wrong_prefix():
+    from bib_lint.status import reference_status
+
+    original = copy.deepcopy(RECORD)
+    original["authors"].append({"family": "others"})
+    found = copy.deepcopy(RECORD)
+    found["authors"].append({"given": "John", "family": "Doe"})
+    source = method("arxiv", record=found, original=original)
+    assert source["comparisons"][1]["result"] == "partial_match"
+    decision = build_consensus([source])
+    assert reference_status({"correctness": decision}) == "Partial match"
+    assert decision["is_correct"] is None
+    original["authors"][0]["family"] = "Wrong"
+    assert compare_fields(original, found)[1]["result"] == "mismatch"
+
+
+def test_found_but_incomplete_is_needs_review_not_unresolved():
+    from bib_lint.status import reference_status
+
+    decision = build_consensus([method("openalex", authority=False)])
+    assert reference_status({"correctness": decision}) == "Needs review"
+    assert reference_status({"correctness": build_consensus([])}) == "Unresolved"

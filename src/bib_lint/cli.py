@@ -1,137 +1,183 @@
-"""CLI presentation; parsing and JSON writing live in workflow.py."""
+"""Two public commands with a separate, versioned final-result stream."""
 
 import argparse
+import json
+import os
 import subprocess
 import sys
+from importlib.metadata import version
 from pathlib import Path
 
-from bib_lint.verification import verify_file
-from bib_lint.workflow import parse_bib
+from bib_lint.audit import Workspace, audit_summary, run_audit
+from bib_lint.scope import validate_report
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        prog="bib-lint", description="Parse BibTeX for reference auditing."
-    )
-    subcommands = parser.add_subparsers(dest="command", required=True)
-    parse = subcommands.add_parser(
-        "parse", help="Parse BibTeX and optionally check compiled AUX usage"
-    )
-    parse.add_argument("path", help="Input .bib file (never modified)")
-    parse.add_argument("--aux", type=Path, help="Compiled .aux file for citation usage")
-    parse.add_argument(
-        "-o", "--output", type=Path, help="Final report name (parse writes input stem.tmp.json)"
-    )
-    parse.add_argument("--encoding", default="utf-8", help="Input encoding (default: utf-8)")
-    parse.add_argument(
-        "--include-source", action="store_true", help="Include decoded original text"
-    )
-    verify = subcommands.add_parser(
-        "verify", help="Verify parsed references against metadata providers"
-    )
-    verify.add_argument("path", help="Parsed JSON report")
-    verify.add_argument("--key", help="Verify only this used citation key (case-insensitive)")
+class ArgumentError(ValueError):
+    pass
+
+
+class Parser(argparse.ArgumentParser):
+    def error(self, message):
+        raise ArgumentError(message)
+
+
+def arguments():
+    parser = Parser(prog="bib-lint", description="Audit local bibliography metadata.")
+    parser.add_argument("--version", action="version", version=f"bib-lint {version('bib-lint')}")
+    commands = parser.add_subparsers(dest="command", required=True)
+    verify = commands.add_parser("verify", help="Parse and verify a bibliography or import JSON")
+    verify.add_argument("path", help="Input .bib or .json file (never modified)")
+    verify.add_argument("--aux", type=Path, help="Compiled AUX: verify only cited entries")
     verify.add_argument(
-        "-o", "--output", type=Path, help="Final report name (default: remove .tmp from input name)"
+        "-o", "--output", type=Path, help="Audit directory (default: <stem>.bib-lint)"
     )
-    verify.add_argument("--cache-dir", type=Path, default=Path(".bib-lint-cache"))
-    verify.add_argument("--refresh", action="store_true", help="Ignore cached provider responses")
-    verify.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Print full responses: formatted JSON or raw HTML/XML",
-    )
-    view = subcommands.add_parser("view", help="Open the Streamlit reference viewer")
-    view.add_argument(
-        "path", nargs="?", default="references.json", help="Report or checkpoint JSON"
-    )
-    view.add_argument("--cache-dir", type=Path, default=Path(".bib-lint-cache"))
+    verify.add_argument("--key", help="Verify one eligible citation key (case-insensitive)")
+    verify.add_argument("--refresh", action="store_true", help="Fetch selected sources again")
+    verify.add_argument("--json", action="store_true", help="Emit one final JSON object on stdout")
+    verify.add_argument("--encoding", help="BibTeX/AUX encoding (default: utf-8)")
+    verify.add_argument("--include-source", action="store_true", help="Include decoded BibTeX text")
+    verify.add_argument("--verbose", action="store_true", help="Redacted HTTP details on stderr")
+    view = commands.add_parser("view", help="Open local workflow controls and audit evidence")
+    view.add_argument("path", nargs="?", help="Audit directory or legacy report file")
     view.add_argument("--port", type=int, default=8501)
-    args = parser.parse_args(argv)
-    if args.command == "view":
-        app = Path(__file__).parent / "viewer" / "app.py"
-        try:
-            return subprocess.call(
-                [
-                    sys.executable,
-                    "-m",
-                    "streamlit",
-                    "run",
-                    str(app),
-                    "--server.headless",
-                    "true",
-                    "--server.address",
-                    "127.0.0.1",
-                    "--server.port",
-                    str(args.port),
-                    "--browser.gatherUsageStats",
-                    "false",
-                    "--",
-                    "--report",
-                    args.path,
-                    "--cache-dir",
-                    str(args.cache_dir),
-                ]
-            )
-        except KeyboardInterrupt:
-            return 130
-    if args.command == "verify":
-        try:
-            destination, summary = verify_file(
-                args.path,
-                output=args.output,
-                cache_dir=args.cache_dir,
-                refresh=args.refresh,
-                verbose=args.verbose,
-                citation_key=args.key,
-                progress=lambda message: print(message, flush=True),
-            )
-        except KeyboardInterrupt:
-            print(
-                "Interrupted; checkpoint retained. Rerun the same command to resume.",
-                file=sys.stderr,
-            )
-            return 130
-        except (OSError, ValueError, LookupError) as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        print("Verification summary: " + "; ".join(f"{k}: {v}" for k, v in summary.items()))
-        print(f"output: {destination}")
-        return 0
+    return parser
 
-    print(f"Parsing: {args.path}", flush=True)
-    if args.aux:
-        print(f"Checking AUX citation usage: {args.aux}", flush=True)
-    bib, aux = parse_bib(
-        args.path,
-        args.aux,
-        output=args.output,
-        encoding=args.encoding,
-        include_source=args.include_source,
-    )
-    total = bib.total if bib.total is not None else "unknown (parsing did not complete)"
-    status = "; JSON not written." if bib.error or (aux and aux.error) else ""
-    print(
-        f"Bib summary: total entries found: {total}; errors: {int(bib.error is not None)}{status}"
-    )
-    if bib.error:
-        print(f"Error: {bib.error}", file=sys.stderr)
-    if aux is not None:
-        if aux.error:
-            print(f"Error: {aux.error}", file=sys.stderr)
-            print("AUX summary: errors: 1; usage incomplete; JSON not written.")
-        else:
-            print(
-                f"AUX summary: unique explicit citation keys: {aux.total}; unused: {aux.unused}; "
-                f"missing from bibliography: {len(aux.missing)}; errors: 0"
-            )
-            if aux.missing:
-                print("Missing citation keys: " + ", ".join(aux.missing))
+
+def final_result(status, workspace=None, report=None, warnings=None, error=None):
+    summary = audit_summary(report) if report is not None else None
+    return {
+        "schema_version": 1,
+        "command": "verify",
+        "status": status,
+        "complete": status == "completed",
+        "output_dir": str(workspace.root) if workspace else None,
+        "report_path": str(workspace.final) if workspace and workspace.final.exists() else None,
+        "checkpoint_path": str(workspace.checkpoint)
+        if workspace and workspace.checkpoint.exists()
+        else None,
+        "scope": validate_report(report)["mode"] if report is not None else None,
+        "summary": summary,
+        "warnings": warnings or [],
+        "error": error,
+    }
+
+
+def emit(result, machine):
+    if machine:
+        print(json.dumps(result, ensure_ascii=False))
     else:
-        print(
-            "AUX summary: skipped" + (" (BibTeX step failed)." if args.aux else " (not supplied).")
+        print(f"Verification: {result['status']}; scope: {result['scope'] or 'unknown'}")
+        if result["summary"] is not None:
+            print(
+                "; ".join(
+                    f"{key.replace('_', ' ')}: {value if value is not None else 'unknown'}"
+                    for key, value in result["summary"].items()
+                )
+            )
+        if result["output_dir"]:
+            print(f"output directory: {result['output_dir']}")
+        for field in ("report_path", "checkpoint_path"):
+            if result[field]:
+                print(f"{field.replace('_', ' ')}: {result[field]}")
+
+
+def safe_message(exc):
+    message = str(exc)
+    for key in ("OPENALEX_API_KEY", "SEMANTIC_SCHOLAR_API_KEY"):
+        if os.environ.get(key):
+            message = message.replace(os.environ[key], "[redacted]")
+    return message
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    machine = "--json" in argv
+    workspace = report = None
+    warnings = []
+    try:
+        if argv and argv[0] == "parse":
+            raise ArgumentError(
+                "parse was retired; use bib-lint verify INPUT --output DIRECTORY "
+                "or the Python parse_bib API for a parsing-only preview"
+            )
+        args = arguments().parse_args(argv)
+        if args.command == "view":
+            if not 1 <= args.port <= 65535:
+                raise ArgumentError("--port must be between 1 and 65535")
+            app = Path(__file__).parent / "viewer" / "app.py"
+            command = [
+                sys.executable,
+                "-m",
+                "streamlit",
+                "run",
+                str(app),
+                "--server.headless",
+                "true",
+                "--server.address",
+                "127.0.0.1",
+                "--server.port",
+                str(args.port),
+                "--browser.gatherUsageStats",
+                "false",
+                "--",
+                "--report",
+                str(Path(args.path).absolute()) if args.path else "",
+            ]
+            return 0 if subprocess.call(command) == 0 else 2
+        workspace = Workspace.for_input(args.path, args.output)
+        workspace, report, warnings = run_audit(
+            args.path,
+            output=args.output,
+            aux=args.aux,
+            encoding=args.encoding,
+            include_source=args.include_source,
+            citation_key=args.key,
+            refresh=args.refresh,
+            verbose=args.verbose,
+            progress=lambda message: print(message, file=sys.stderr, flush=True),
         )
-    if bib.error or (aux is not None and aux.error):
-        return 2
-    print(f"output: {bib.output}")
-    return 0
+        for warning in warnings:
+            print(warning, file=sys.stderr)
+        result = final_result(
+            "completed" if report["verification_run"]["complete"] else "partial",
+            workspace,
+            report,
+            warnings,
+        )
+        emit(result, machine)
+        return 0
+    except (KeyboardInterrupt, OSError, ValueError, LookupError) as exc:
+        interrupted = isinstance(exc, KeyboardInterrupt)
+        # Load only an actual owned artifact; a malformed checkpoint remains an error.
+        if workspace is not None and workspace.active().exists():
+            try:
+                report = json.loads(workspace.active().read_text(encoding="utf-8"))
+                validate_report(report)
+                warnings = report.get("audit_warnings", [])
+            except (OSError, ValueError, TypeError):
+                report = None
+        message = (
+            "Interrupted; rerun the same command to resume saved outcomes."
+            if interrupted
+            else safe_message(exc)
+        )
+        print(f"Error: {message}", file=sys.stderr)
+        if "args" not in locals() or args.command != "view":
+            code = (
+                "interrupted"
+                if interrupted
+                else "arguments"
+                if isinstance(exc, ArgumentError)
+                else "audit_failed"
+            )
+            emit(
+                final_result(
+                    "interrupted" if interrupted else "failed",
+                    workspace,
+                    report,
+                    warnings,
+                    {"code": code, "message": message},
+                ),
+                machine,
+            )
+        return 130 if interrupted else 2

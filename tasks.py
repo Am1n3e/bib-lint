@@ -2,7 +2,6 @@
 
 import shlex
 import shutil
-import sys
 from pathlib import Path
 
 from invoke import Exit, task
@@ -65,9 +64,9 @@ def format_code(context):
 
 @task
 def complexity(context):
-    """Reject new complexity violations and increases above the baseline."""
+    """Enforce a McCabe complexity ceiling of 10 for every Python function."""
     with context.cd(str(ROOT)):
-        context.run(shlex.join([sys.executable, "-m", "scripts.check_complexity"]), echo=True)
+        context.run("ruff check . --select C901 --ignore-noqa", echo=True)
 
 
 @task(pre=[lint, format_check, complexity])

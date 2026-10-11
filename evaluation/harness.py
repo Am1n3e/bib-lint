@@ -108,62 +108,9 @@ def run_split(
     pacer = HostPacer()
     stopped = threading.Event()
 
-    def execute(case, index):
-        case_folder = folder / "cases" / hashlib.sha256(case.id.encode()).hexdigest()[:24]
-        case_folder.mkdir(parents=True, exist_ok=True)
-        print(
-            f"[{name}/{split}] {index}/{len(selected)} {case.id}: starting",
-            file=sys.stderr,
-            flush=True,
-        )
-
-        def progress(message):
-            if stopped.is_set():
-                raise KeyboardInterrupt
-            with (case_folder / "progress.log").open("a") as handle:
-                handle.write(f"{datetime.now(UTC).isoformat()} {message}\n")
-            if verbose:
-                print(message, file=sys.stderr, flush=True)
-
-        start = time.monotonic()
-        stage = "conversion"
-        task_client = None
-        try:
-            report, conversion = make_report(case)
-            stage = "storage"
-            write_json(case_folder / "conversion.json", conversion)
-            input_path = case_folder / "input.json"
-            write_json(input_path, report)
-            stage = "client_setup"
-            task_client = client or PacedMetadataClient(case_folder / "audit" / "cache", pacer)
-            if isinstance(task_client, MetadataClient):
-                task_client.cache_dir = case_folder / "audit" / "cache"
-                task_client.cache = ResponseCache(task_client.cache_dir)
-            stage = "bib_lint"
-            _, report, _ = audit(
-                input_path, output=case_folder / "audit", client=task_client, progress=progress
-            )
-            stage = "export"
-            prediction = prediction_from_report(report, time.monotonic() - start)
-            if prediction["id"] != case.id:
-                raise ValueError("Audit returned a different benchmark reference")
-        except Exception as exc:
-            prediction = unavailable_prediction(case.id, f"{type(exc).__name__}: {exc}")
-            prediction["failure_stage"] = stage
-            write_json(
-                case_folder / ("tool-error.json" if stage == "bib_lint" else "input-error.json"),
-                {
-                    "id": case.id,
-                    "raw_reference": case.raw_reference,
-                    "error": str(exc),
-                    "stage": stage,
-                },
-            )
-        finally:
-            if client is None and task_client is not None:
-                task_client.close()
-        prediction["case_dir"] = str(case_folder.relative_to(root))
-        return prediction
+    execute = _case_executor(
+        folder, name, split, selected, stopped, verbose, client, pacer, audit, root
+    )
 
     def save(case, prediction):
         by_id[case.id] = prediction
@@ -196,32 +143,7 @@ def run_split(
         for index, case in pending:
             save(case, execute(case, index))
     else:
-        executor = ThreadPoolExecutor(max_workers=workers)
-        waiting = iter(pending)
-        futures = {}
-
-        def submit_next():
-            item = next(waiting, None)
-            if item:
-                index, case = item
-                futures[executor.submit(execute, case, index)] = case
-
-        try:
-            for _ in range(workers):
-                submit_next()
-            while futures:
-                done, _ = wait(futures, return_when=FIRST_COMPLETED)
-                for future in done:
-                    save(futures.pop(future), future.result())
-                    submit_next()
-        finally:
-            # Do not queue the whole corpus: Ctrl-C cancels pending work and
-            # running audits stop at their next normal progress boundary.
-            stopped.set()
-            executor.shutdown(wait=True, cancel_futures=True)
-            for future, case in futures.items():
-                if future.done() and not future.cancelled() and future.exception() is None:
-                    save(case, future.result())
+        _run_parallel(workers, pending, execute, save, stopped)
     predictions = [by_id[c.id] for c in cases if c.id in by_id]
     write_json(
         folder / "run-status.json",
@@ -281,46 +203,9 @@ def main(argv=None):
     with report_lock(root / "harness.json"):
         for name in names:
             try:
-                snapshot = (
-                    prepare(name, root)
-                    if args.command in {"prepare", "run"}
-                    else verify_snapshot(root / "sources" / name)
-                )
-                if snapshot["status"] == "unavailable":
-                    results[name] = snapshot
-                    failed = True
-                    continue
-                if args.command == "prepare":
-                    results[name] = snapshot
-                    continue
-                splits = [args.split] if args.split else BENCHMARKS[name]["splits"]
-                results[name] = {}
-                for split in splits:
-                    if args.command == "run":
-                        value = run_split(
-                            name,
-                            split,
-                            root,
-                            limit=args.limit,
-                            retry_errors=args.retry_errors,
-                            verbose=args.verbose,
-                            workers=args.workers,
-                        )
-                    else:
-                        cases = load_cases(name, split, root)
-                        folder = root / "runs" / name / split
-                        folder.mkdir(parents=True, exist_ok=True)
-                        value = score(
-                            name,
-                            split,
-                            cases,
-                            read_predictions(folder),
-                            folder,
-                            root / "sources" / name,
-                        )
-                    results[name][split] = value
-                    if not value["harness_ok"]:
-                        failed = True
+                value, benchmark_failed = _benchmark_command(args, name, root)
+                results[name] = value
+                failed = failed or benchmark_failed
             except (ValueError, OSError, httpx.HTTPError) as exc:
                 results[name] = {"status": "failed", "error": f"{type(exc).__name__}: {exc}"}
                 failed = True
@@ -331,3 +216,138 @@ def main(argv=None):
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def _case_executor(folder, name, split, selected, stopped, verbose, client, pacer, audit, root):
+    def execute(case, index):
+        case_folder = folder / "cases" / hashlib.sha256(case.id.encode()).hexdigest()[:24]
+        case_folder.mkdir(parents=True, exist_ok=True)
+        print(
+            f"[{name}/{split}] {index}/{len(selected)} {case.id}: starting",
+            file=sys.stderr,
+            flush=True,
+        )
+
+        def progress(message):
+            if stopped.is_set():
+                raise KeyboardInterrupt
+            with (case_folder / "progress.log").open("a") as handle:
+                handle.write(f"{datetime.now(UTC).isoformat()} {message}\n")
+            if verbose:
+                print(message, file=sys.stderr, flush=True)
+
+        start = time.monotonic()
+        stage = "conversion"
+        task_client = None
+        try:
+            report, conversion = make_report(case)
+            stage = "storage"
+            write_json(case_folder / "conversion.json", conversion)
+            input_path = case_folder / "input.json"
+            write_json(input_path, report)
+            stage = "client_setup"
+            task_client = client or PacedMetadataClient(case_folder / "audit" / "cache", pacer)
+            if isinstance(task_client, MetadataClient):
+                task_client.cache_dir = case_folder / "audit" / "cache"
+                task_client.cache = ResponseCache(task_client.cache_dir)
+            stage = "bib_lint"
+            _, report, _ = audit(
+                input_path, output=case_folder / "audit", client=task_client, progress=progress
+            )
+            stage = "export"
+            prediction = prediction_from_report(report, time.monotonic() - start)
+            if prediction["id"] != case.id:
+                raise ValueError("Audit returned a different benchmark reference")
+        except Exception as exc:
+            prediction = unavailable_prediction(case.id, f"{type(exc).__name__}: {exc}")
+            prediction["failure_stage"] = stage
+            write_json(
+                case_folder / ("tool-error.json" if stage == "bib_lint" else "input-error.json"),
+                {
+                    "id": case.id,
+                    "raw_reference": case.raw_reference,
+                    "error": str(exc),
+                    "stage": stage,
+                },
+            )
+        finally:
+            if client is None and task_client is not None:
+                task_client.close()
+        prediction["case_dir"] = str(case_folder.relative_to(root))
+        return prediction
+
+    return execute
+
+
+def _run_parallel(workers, pending, execute, save, stopped):
+    executor = ThreadPoolExecutor(max_workers=workers)
+    waiting = iter(pending)
+    futures = {}
+
+    def submit_next():
+        item = next(waiting, None)
+        if item:
+            index, case = item
+            futures[executor.submit(execute, case, index)] = case
+
+    try:
+        for _ in range(workers):
+            submit_next()
+        while futures:
+            done, _ = wait(futures, return_when=FIRST_COMPLETED)
+            for future in done:
+                save(futures.pop(future), future.result())
+                submit_next()
+    finally:
+        # Do not queue the whole corpus: Ctrl-C cancels pending work and
+        # running audits stop at their next normal progress boundary.
+        stopped.set()
+        executor.shutdown(wait=True, cancel_futures=True)
+        for future, case in futures.items():
+            if future.done() and not future.cancelled() and future.exception() is None:
+                save(case, future.result())
+
+
+def _benchmark_command(args, name, root):
+    results, failed = {}, False
+    snapshot = (
+        prepare(name, root)
+        if args.command in {"prepare", "run"}
+        else verify_snapshot(root / "sources" / name)
+    )
+    if snapshot["status"] == "unavailable":
+        results[name] = snapshot
+        failed = True
+        return results[name], failed
+    if args.command == "prepare":
+        results[name] = snapshot
+        return results[name], failed
+    splits = [args.split] if args.split else BENCHMARKS[name]["splits"]
+    results[name] = {}
+    for split in splits:
+        if args.command == "run":
+            value = run_split(
+                name,
+                split,
+                root,
+                limit=args.limit,
+                retry_errors=args.retry_errors,
+                verbose=args.verbose,
+                workers=args.workers,
+            )
+        else:
+            cases = load_cases(name, split, root)
+            folder = root / "runs" / name / split
+            folder.mkdir(parents=True, exist_ok=True)
+            value = score(
+                name,
+                split,
+                cases,
+                read_predictions(folder),
+                folder,
+                root / "sources" / name,
+            )
+        results[name][split] = value
+        if not value["harness_ok"]:
+            failed = True
+    return results[name], failed

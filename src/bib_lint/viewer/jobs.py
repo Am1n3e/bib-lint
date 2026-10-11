@@ -129,34 +129,11 @@ class Registry:
         overflow = [False]
         read_errors = []
 
-        def stdout():
-            size = 0
-            try:
-                for chunk in iter(lambda: job.process.stdout.read(4096), ""):
-                    size += len(chunk)
-                    if size <= 1_000_000:
-                        chunks.append(chunk)
-                    else:
-                        overflow[0] = True
-            except (OSError, ValueError):
-                read_errors.append("stdout")
-            finally:
-                job.process.stdout.close()
-
-        def stderr():
-            # Fixed-size reads also bound a single enormous verbose response line.
-            try:
-                for chunk in iter(lambda: job.process.stderr.readline(1024), ""):
-                    with job.guard:
-                        job.logs.append(chunk)
-            except (OSError, ValueError):
-                read_errors.append("stderr")
-            finally:
-                job.process.stderr.close()
-
         readers = [
-            threading.Thread(target=stdout, daemon=True),
-            threading.Thread(target=stderr, daemon=True),
+            threading.Thread(
+                target=_read_stdout, args=(job, chunks, overflow, read_errors), daemon=True
+            ),
+            threading.Thread(target=_read_stderr, args=(job, read_errors), daemon=True),
         ]
         for reader in readers:
             reader.start()
@@ -239,3 +216,30 @@ class Registry:
 
 REGISTRY = Registry()
 atexit.register(REGISTRY.shutdown)
+
+
+def _read_stdout(job, chunks, overflow, read_errors):
+    size = 0
+    try:
+        for chunk in iter(lambda: job.process.stdout.read(4096), ""):
+            size += len(chunk)
+            if size <= 1_000_000:
+                chunks.append(chunk)
+            else:
+                overflow[0] = True
+    except (OSError, ValueError):
+        read_errors.append("stdout")
+    finally:
+        job.process.stdout.close()
+
+
+def _read_stderr(job, read_errors):
+    # Fixed-size reads also bound a single enormous verbose response line.
+    try:
+        for chunk in iter(lambda: job.process.stderr.readline(1024), ""):
+            with job.guard:
+                job.logs.append(chunk)
+    except (OSError, ValueError):
+        read_errors.append("stderr")
+    finally:
+        job.process.stderr.close()

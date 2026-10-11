@@ -118,70 +118,109 @@ def workflow_controls():
         refresh_key = selected_column.button(
             "Refresh selected key", disabled=busy or not key, key="refresh_key"
         )
-        try:
-            if opened:
-                path = Path(output).absolute()
-                if not output or not path.is_dir():
-                    raise ValueError("Enter an existing audit directory")
-                load_report(path)
-                st.session_state["report_path"] = str(path)
-                st.rerun()
-            if parse or verify or refresh or verify_key or refresh_key:
-                if not bib:
-                    raise ValueError("Enter a local bibliography path")
-                if parse:
-                    workspace, _, warnings = run_audit(
-                        bib, output=output or None, aux=aux or None, preview=True
-                    )
-                    st.session_state["preview_warnings"] = warnings
-                else:
-                    # Full-scope actions ignore the optional key; key actions select it explicitly.
-                    options["citation_key"] = key if verify_key or refresh_key else None
-                    job = REGISTRY.start(
-                        bib,
-                        output=output or None,
-                        owner=owner,
-                        refresh=refresh or refresh_key,
-                        **options,
-                    )
-                    workspace = job.workspace
-                    st.session_state["active_root"] = str(workspace.root)
-                st.session_state["report_path"] = str(workspace.root)
-                st.rerun()
-        except (OSError, ValueError, LookupError) as exc:
-            st.error(str(exc))
+        job = _workflow_action(
+            opened,
+            output,
+            parse,
+            verify,
+            refresh,
+            verify_key,
+            refresh_key,
+            bib,
+            aux,
+            key,
+            owner,
+            options,
+            job,
+        )
         for warning in st.session_state.get("preview_warnings", []):
             st.warning(warning)
-        if job:
-            if job.state in ACTIVE:
-                if st.button("Stop", disabled=job.state == "stopping", key="stop_audit"):
-                    REGISTRY.stop(job)
-                    st.rerun()
-            elif job.state in {"interrupted", "failed", "completed"}:
-                if st.button("Resume", key="resume_audit"):
-                    try:
-                        job = start_from_command(job, owner)
-                        st.session_state["active_root"] = str(job.workspace.root)
-                        st.rerun()
-                    except (OSError, ValueError) as exc:
-                        st.error(str(exc))
-            job_status(str(job.workspace.root))
-        elif selected and Path(selected).is_dir():
-            # Reopen an audit from a previous server process; resume its recorded input.
-            if st.button("Resume", key="resume_saved"):
+        _job_controls(job, selected, owner)
+    return busy
+
+
+def _workflow_action(
+    opened,
+    output,
+    parse,
+    verify,
+    refresh,
+    verify_key,
+    refresh_key,
+    bib,
+    aux,
+    key,
+    owner,
+    options,
+    job,
+):
+    try:
+        if opened:
+            path = Path(output).absolute()
+            if not output or not path.is_dir():
+                raise ValueError("Enter an existing audit directory")
+            load_report(path)
+            st.session_state["report_path"] = str(path)
+            st.rerun()
+        if parse or verify or refresh or verify_key or refresh_key:
+            if not bib:
+                raise ValueError("Enter a local bibliography path")
+            if parse:
+                workspace, _, warnings = run_audit(
+                    bib, output=output or None, aux=aux or None, preview=True
+                )
+                st.session_state["preview_warnings"] = warnings
+            else:
+                # Full-scope actions ignore the optional key; key actions select it explicitly.
+                options["citation_key"] = key if verify_key or refresh_key else None
+                job = REGISTRY.start(
+                    bib,
+                    output=output or None,
+                    owner=owner,
+                    refresh=refresh or refresh_key,
+                    **options,
+                )
+                workspace = job.workspace
+                st.session_state["active_root"] = str(workspace.root)
+            st.session_state["report_path"] = str(workspace.root)
+            st.rerun()
+    except (OSError, ValueError, LookupError) as exc:
+        st.error(str(exc))
+    return job
+
+
+def _job_controls(job, selected, owner):
+    if job:
+        if job.state in ACTIVE:
+            if st.button("Stop", disabled=job.state == "stopping", key="stop_audit"):
+                REGISTRY.stop(job)
+                st.rerun()
+        elif job.state in {"interrupted", "failed", "completed"}:
+            if st.button("Resume", key="resume_audit"):
                 try:
-                    report = load_report(selected)
-                    saved = report.get("audit_input")
-                    if not saved:
-                        raise ValueError(
-                            "Enter the original input path and use Verify to resume this audit"
-                        )
-                    options = {
-                        k: saved[k] for k in ("aux", "encoding", "include_source") if k in saved
-                    }
-                    job = REGISTRY.start(saved["path"], output=selected, owner=owner, **options)
+                    job = start_from_command(job, owner)
                     st.session_state["active_root"] = str(job.workspace.root)
                     st.rerun()
-                except (OSError, ValueError, KeyError) as exc:
+                except (OSError, ValueError) as exc:
                     st.error(str(exc))
-    return busy
+        job_status(str(job.workspace.root))
+    elif selected and Path(selected).is_dir():
+        # Reopen an audit from a previous server process; resume its recorded input.
+        _resume_saved(selected, owner)
+
+
+def _resume_saved(selected, owner):
+    if st.button("Resume", key="resume_saved"):
+        try:
+            report = load_report(selected)
+            saved = report.get("audit_input")
+            if not saved:
+                raise ValueError(
+                    "Enter the original input path and use Verify to resume this audit"
+                )
+            options = {k: saved[k] for k in ("aux", "encoding", "include_source") if k in saved}
+            job = REGISTRY.start(saved["path"], output=selected, owner=owner, **options)
+            st.session_state["active_root"] = str(job.workspace.root)
+            st.rerun()
+        except (OSError, ValueError, KeyError) as exc:
+            st.error(str(exc))

@@ -17,6 +17,40 @@ def component(value):
 
 
 class ResponseCache:
+    def _load_entry(self, citation_key, prefix, entry, manifest):
+        relative = Path(entry.get("path", ""))
+        valid_path = (
+            len(relative.parts) == 2
+            and relative.parts[0] == component(citation_key)
+            and relative.name.startswith(prefix)
+            and not relative.is_absolute()
+        )
+        path = self.root / relative
+        raw = None
+        if valid_path and not path.is_symlink():
+            try:
+                raw = path.read_bytes()
+            except OSError:
+                pass
+        if raw is None or hashlib.sha256(raw).hexdigest() != entry.get("sha256"):
+            if valid_path and (path.is_file() or path.is_symlink()):
+                path.unlink()
+            manifest["files"].remove(entry)
+            write_json(self.manifest, manifest)
+            return None
+        if time.time() - entry["cached_at"] >= 7 * 86400:
+            return None
+        return raw, entry
+
+    def _remove_untracked(self, folder, prefix, manifest):
+        tracked = {entry.get("path") for entry in manifest["files"] if isinstance(entry, dict)}
+        # Untracked raw responses have no trusted checksum and cannot be reused.
+        if folder.exists():
+            for path in folder.iterdir():
+                if path.name.startswith(prefix) and path.is_file():
+                    if path.relative_to(self.root).as_posix() not in tracked:
+                        path.unlink()
+
     def __init__(self, root):
         self.root = Path(root)
         self.manifest = self.root / "checksum.json"
@@ -43,13 +77,7 @@ class ResponseCache:
             manifest = self._manifest()
             folder = self._folder(citation_key)
             prefix = component(method) + "_"
-            tracked = {entry.get("path") for entry in manifest["files"] if isinstance(entry, dict)}
-            # Untracked raw responses have no trusted checksum and cannot be reused.
-            if folder.exists():
-                for path in folder.iterdir():
-                    if path.name.startswith(prefix) and path.is_file():
-                        if path.relative_to(self.root).as_posix() not in tracked:
-                            path.unlink()
+            self._remove_untracked(folder, prefix, manifest)
             candidates = [
                 entry
                 for entry in manifest["files"]
@@ -62,29 +90,7 @@ class ResponseCache:
             if not candidates:
                 return None
             entry = max(candidates, key=lambda e: e.get("cached_at", 0))
-            relative = Path(entry.get("path", ""))
-            valid_path = (
-                len(relative.parts) == 2
-                and relative.parts[0] == component(citation_key)
-                and relative.name.startswith(prefix)
-                and not relative.is_absolute()
-            )
-            path = self.root / relative
-            raw = None
-            if valid_path and not path.is_symlink():
-                try:
-                    raw = path.read_bytes()
-                except OSError:
-                    pass
-            if raw is None or hashlib.sha256(raw).hexdigest() != entry.get("sha256"):
-                if valid_path and (path.is_file() or path.is_symlink()):
-                    path.unlink()
-                manifest["files"].remove(entry)
-                write_json(self.manifest, manifest)
-                return None
-            if time.time() - entry["cached_at"] >= 7 * 86400:
-                return None
-            return raw, entry
+            return self._load_entry(citation_key, prefix, entry, manifest)
 
     def save(self, citation_key, method, request_key, url, response):
         self.root.mkdir(parents=True, exist_ok=True)

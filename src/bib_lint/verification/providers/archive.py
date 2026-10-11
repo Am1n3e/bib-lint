@@ -15,6 +15,32 @@ from bib_lint.verification.providers.protocol import Applicability, LookupAttemp
 
 
 class ArchiveProvider:
+    def _discover_catalogs(self, query, context, builder):
+        try:
+            for url in self.catalogs(query, context):
+
+                def discover(url=url):
+                    text = context.get(url, page=True)
+                    for paper in self.paper_links(text, url, query):
+                        yield from self.fetch_record(context, paper)
+
+                if not builder.run("catalog", url, query.title, discover):
+                    break
+        except LookupFailure as exc:
+            if exc.code != "incomplete_search":
+                raise
+            builder.complete = False
+            builder.diagnostic = str(exc)
+            builder.attempts.append(
+                LookupAttempt(
+                    "catalog_routing",
+                    self.descriptor.display_name,
+                    query.title,
+                    False,
+                    diagnostic=str(exc),
+                )
+            )
+
     def direct_url(self, query):
         return supported_url(query, self.descriptor.allowed_hosts)
 
@@ -73,30 +99,7 @@ class ArchiveProvider:
                 False,
                 "Missing year or volume routing context",
             )
-        try:
-            for url in self.catalogs(query, context):
-
-                def discover(url=url):
-                    text = context.get(url, page=True)
-                    for paper in self.paper_links(text, url, query):
-                        yield from self.fetch_record(context, paper)
-
-                if not builder.run("catalog", url, query.title, discover):
-                    break
-        except LookupFailure as exc:
-            if exc.code != "incomplete_search":
-                raise
-            builder.complete = False
-            builder.diagnostic = str(exc)
-            builder.attempts.append(
-                LookupAttempt(
-                    "catalog_routing",
-                    self.descriptor.display_name,
-                    query.title,
-                    False,
-                    diagnostic=str(exc),
-                )
-            )
+        self._discover_catalogs(query, context, builder)
         result = builder.result()
         if not result.attempts:
             result = replace(

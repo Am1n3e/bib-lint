@@ -98,25 +98,7 @@ def check_case(root, case, prediction):
     native = prediction_from_report(report, prediction["wall_clock_seconds"])
     if any(prediction[key] != value for key, value in native.items()):
         raise ValueError("Prediction differs from the saved native bib-lint report")
-    cache = folder / "audit" / "cache"
-    path = cache / "checksum.json"
-    manifest = json.loads(path.read_text()) if path.exists() else {"files": []}
-    tracked = {}
-    for item in manifest["files"]:
-        relative = Path(item["path"])
-        if relative.is_absolute() or ".." in relative.parts:
-            raise ValueError("Unsafe evidence path")
-        if hashlib.sha256((cache / relative).read_bytes()).hexdigest() != item["sha256"]:
-            raise ValueError(f"Evidence checksum mismatch: {relative}")
-        tracked[item["path"]] = item["sha256"]
-    for method in report["items"][0]["validations"]["correctness"].get("methods", []):
-        for request in method.get("requests", []):
-            for evidence in [request, *request.get("responses", [])]:
-                if evidence.get("cache_file") and tracked.get(
-                    evidence["cache_file"]
-                ) != evidence.get("sha256"):
-                    raise ValueError("Report evidence is absent from the verified cache")
-    return len(tracked)
+    return _check_evidence(folder, report)
 
 
 def check_scores(name, split, cases, predictions, folder, sources):
@@ -125,58 +107,7 @@ def check_scores(name, split, cases, predictions, folder, sources):
     if not result["complete"] or not result["harness_ok"] or result["coverage"] != counts:
         raise ValueError("Stored evaluation has incomplete or inconsistent coverage")
     if name == "hallmark":
-        check_official_evaluator()
-        from hallmark.dataset.schema import Prediction, load_entries
-        from hallmark.evaluation.metrics import build_confusion_matrix, evaluate
-
-        entries = load_entries(sources / f"{split}.jsonl")
-        if [(e.bibtex_key, e.fields, e.label == "HALLUCINATED") for e in entries] != [
-            (c.id, c.fields, c.issue) for c in cases
-        ]:
-            raise ValueError("Harness cases differ from the official HALLMARK loader")
-        rows = [
-            json.loads(line)
-            for line in (folder / "official_predictions.jsonl").read_text().splitlines()
-        ]
-        official = [Prediction.from_dict(row) for row in rows]
-        expected = [
-            Prediction(
-                bibtex_key=p["id"],
-                label=p["label"],
-                confidence=p["confidence"],
-                reason=p["reason"],
-                evaluated=p["evaluated"],
-                api_sources_queried=p["sources"],
-                api_calls=p["api_calls"],
-                wall_clock_seconds=p["wall_clock_seconds"],
-            )
-            for p in aligned
-        ]
-        if [asdict(p) for p in official] != [asdict(p) for p in expected]:
-            raise ValueError("Official prediction export differs from native predictions")
-        metric_results = evaluate(
-            entries, official, tool_name="bib-lint", split_name=split, eval_mode="both"
-        )
-        ignored = {"tool_version", "split_sha256", "run_timestamp", "source_condition"}
-        for mode, metrics in metric_results.items():
-            actual = result["official_metrics"][mode]
-            if any(
-                actual[key] != value
-                for key, value in primitive(asdict(metrics)).items()
-                if key not in ignored
-            ):
-                raise ValueError(f"Stored {mode} metrics differ from the official evaluator")
-            if actual["split_sha256"] != digest((sources / f"{split}.jsonl").read_bytes()):
-                raise ValueError("Official metrics are stamped with a different dataset hash")
-            if actual["tool_version"] != importlib.metadata.version("bib-lint"):
-                raise ValueError("Official metrics describe a different tool version")
-        if result["evaluator_revision"] != HALLMARK_REVISION:
-            raise ValueError("Official evaluator revision differs from the pinned release")
-        cm = build_confusion_matrix(entries, official)
-        total = cm.tp + cm.tn + cm.fp + cm.fn
-        accuracy = (cm.tp + cm.tn) / total if total else None
-        if result["supplementary_conservative_accuracy"] != accuracy:
-            raise ValueError("Supplementary accuracy differs from official confusion counts")
+        _check_hallmark_scores(split, cases, aligned, folder, sources, result)
     elif name == "zenodo":
         if result["protocol_metrics"] != independently_count_binary(cases, aligned):
             raise ValueError("Published-protocol metrics differ from prediction counts")
@@ -377,3 +308,80 @@ def main(argv=None):
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def _check_evidence(folder, report):
+    cache = folder / "audit" / "cache"
+    path = cache / "checksum.json"
+    manifest = json.loads(path.read_text()) if path.exists() else {"files": []}
+    tracked = {}
+    for item in manifest["files"]:
+        relative = Path(item["path"])
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("Unsafe evidence path")
+        if hashlib.sha256((cache / relative).read_bytes()).hexdigest() != item["sha256"]:
+            raise ValueError(f"Evidence checksum mismatch: {relative}")
+        tracked[item["path"]] = item["sha256"]
+    for method in report["items"][0]["validations"]["correctness"].get("methods", []):
+        for request in method.get("requests", []):
+            for evidence in [request, *request.get("responses", [])]:
+                if evidence.get("cache_file") and tracked.get(
+                    evidence["cache_file"]
+                ) != evidence.get("sha256"):
+                    raise ValueError("Report evidence is absent from the verified cache")
+    return len(tracked)
+
+
+def _check_hallmark_scores(split, cases, aligned, folder, sources, result):
+    check_official_evaluator()
+    from hallmark.dataset.schema import Prediction, load_entries
+    from hallmark.evaluation.metrics import build_confusion_matrix, evaluate
+
+    entries = load_entries(sources / f"{split}.jsonl")
+    if [(e.bibtex_key, e.fields, e.label == "HALLUCINATED") for e in entries] != [
+        (c.id, c.fields, c.issue) for c in cases
+    ]:
+        raise ValueError("Harness cases differ from the official HALLMARK loader")
+    rows = [
+        json.loads(line)
+        for line in (folder / "official_predictions.jsonl").read_text().splitlines()
+    ]
+    official = [Prediction.from_dict(row) for row in rows]
+    expected = [
+        Prediction(
+            bibtex_key=p["id"],
+            label=p["label"],
+            confidence=p["confidence"],
+            reason=p["reason"],
+            evaluated=p["evaluated"],
+            api_sources_queried=p["sources"],
+            api_calls=p["api_calls"],
+            wall_clock_seconds=p["wall_clock_seconds"],
+        )
+        for p in aligned
+    ]
+    if [asdict(p) for p in official] != [asdict(p) for p in expected]:
+        raise ValueError("Official prediction export differs from native predictions")
+    metric_results = evaluate(
+        entries, official, tool_name="bib-lint", split_name=split, eval_mode="both"
+    )
+    ignored = {"tool_version", "split_sha256", "run_timestamp", "source_condition"}
+    for mode, metrics in metric_results.items():
+        actual = result["official_metrics"][mode]
+        if any(
+            actual[key] != value
+            for key, value in primitive(asdict(metrics)).items()
+            if key not in ignored
+        ):
+            raise ValueError(f"Stored {mode} metrics differ from the official evaluator")
+        if actual["split_sha256"] != digest((sources / f"{split}.jsonl").read_bytes()):
+            raise ValueError("Official metrics are stamped with a different dataset hash")
+        if actual["tool_version"] != importlib.metadata.version("bib-lint"):
+            raise ValueError("Official metrics describe a different tool version")
+    if result["evaluator_revision"] != HALLMARK_REVISION:
+        raise ValueError("Official evaluator revision differs from the pinned release")
+    cm = build_confusion_matrix(entries, official)
+    total = cm.tp + cm.tn + cm.fp + cm.fn
+    accuracy = (cm.tp + cm.tn) / total if total else None
+    if result["supplementary_conservative_accuracy"] != accuracy:
+        raise ValueError("Supplementary accuracy differs from official confusion counts")

@@ -35,9 +35,3 @@ jobs:
         run: uv sync --locked --only-dev
       - name: Check ${{ matrix.task }}
         run: uv run --no-sync invoke ${{ matrix.task }}
-      - name: Install runtime dependencies for gate regression tests
-        if: matrix.task == 'complexity'
-        run: uv sync --locked
-      - name: Test the complexity gate
-        if: matrix.task == 'complexity'
-        run: uv run --no-sync pytest -q tests/test_complexity.py

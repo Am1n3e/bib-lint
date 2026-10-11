@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 from collections.abc import Callable
+from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -13,8 +14,79 @@ from bib_lint.storage import report_lock, report_paths
 from bib_lint.storage import write_json as _write_json
 from bib_lint.verification.consensus import build_consensus
 from bib_lint.verification.http import LookupFailure, MetadataClient
-from bib_lint.verification.matching import input_record
+from bib_lint.verification.matching import select_result
 from bib_lint.verification.providers import METHODS
+from bib_lint.verification.providers.context import RequestContext
+from bib_lint.verification.providers.protocol import Applicability, LookupQuery, LookupResult
+from bib_lint.verification.providers.registry import validate_registry
+
+
+def _attempt_data(attempt):
+    data = asdict(attempt)
+    data["candidate_urls"] = list(attempt.candidate_urls)
+    return data
+
+
+def _source_result(provider, query, context):
+    descriptor = provider.descriptor
+    applicable = provider.applicability(query)
+    if not isinstance(applicable, Applicability):
+        raise ValueError("Provider must return Applicability")
+    applicable.validate()
+    if applicable.state != "applicable":
+        result = select_result(descriptor.id, query.as_record(), [])
+        result["reason"] = applicable.reason
+        if applicable.state == "inapplicable":
+            result["status"] = "not_applicable"
+        else:
+            result.update(
+                status="error", error={"code": "incomplete_search", "message": applicable.reason}
+            )
+        result["lookup_provenance"] = [
+            {
+                "strategy": s,
+                "scope": descriptor.display_name,
+                "complete": False,
+                "diagnostic": applicable.reason,
+            }
+            for s in applicable.strategies
+        ]
+        return result
+    lookup = provider.lookup(query, context)
+    if not isinstance(lookup, LookupResult):
+        raise ValueError("Provider must return LookupResult")
+    lookup.validate()
+    if len(lookup.candidates) > descriptor.request_policy.max_candidates:
+        raise LookupFailure("incomplete_search", "Candidate budget exceeded")
+    records = [c.as_record() for c in lookup.candidates]
+    result = select_result(descriptor.id, query.as_record(), records)
+    result["lookup_provenance"] = [_attempt_data(a) for a in lookup.attempts]
+    result["lookup_complete"] = lookup.complete
+
+    def authoritative(record):
+        if descriptor.evidence_category == "preprint_archive":
+            return record.get("record_type") == "preprint"
+        return record.get("record_type") == "publication" and record.get("publication_status") in {
+            "accepted",
+            "published",
+        }
+
+    result["authority"] = (
+        authoritative(result["found_ref"])
+        if result.get("found_ref")
+        else any(authoritative(r) for r in records)
+    )
+    if not lookup.complete:
+        result.update(
+            status="error",
+            authority=False,
+            found_ref=None,
+            comparisons=[],
+            differences=[],
+            candidates=records,
+            error={"code": "incomplete_search", "message": lookup.diagnostic},
+        )
+    return result
 
 
 def verify_reference(
@@ -26,11 +98,11 @@ def verify_reference(
     progress=None,
     checkpoint=None,
 ) -> dict:
-    record = input_record(entry)
-    record["input_url"] = entry.get("fields", {}).get("url", "")
+    registry = validate_registry(METHODS if methods is None else methods)
+    query = LookupQuery.from_entry(entry)
     results = []
     saved = {m["name"]: m for m in (previous or [])}
-    for name, function in (METHODS if methods is None else methods).items():
+    for name, provider in registry.items():
         if name in saved and saved[name]["status"] != "error":
             results.append(saved[name])
             if progress:
@@ -44,12 +116,9 @@ def verify_reference(
         client.citation_key = entry.get("key", "_unknown")
         client.method = name
         start = len(client.evidence)
+        context = RequestContext(client, provider.descriptor, query.citation_key)
         try:
-            if not record["title"]:
-                raise LookupFailure(
-                    "insufficient_input", "Entry has no title for identity checking"
-                )
-            result = function(record, client)
+            result = _source_result(provider, query, context)
         except OSError:
             # Evidence persistence failures are execution errors, not provider findings.
             raise
@@ -68,6 +137,18 @@ def verify_reference(
                     "code": code,
                     "message": str(exc) if isinstance(exc, LookupFailure) else type(exc).__name__,
                 }
+            result["lookup_provenance"] = [
+                _attempt_data(a) for a in getattr(context, "lookup_attempts", ())
+            ]
+            candidates = [c.as_record() for c in getattr(context, "retrieved_candidates", ())]
+            if candidates:
+                result["candidates"] = candidates
+        result.update(
+            adapter_version=provider.descriptor.adapter_version,
+            display_name=provider.descriptor.display_name,
+            evidence_category=provider.descriptor.evidence_category,
+            canonical_priority=provider.descriptor.canonical_priority,
+        )
         result["requests"] = client.evidence[start:]
         result["checked_at"] = datetime.now(UTC).isoformat()
         results.append(result)
@@ -135,7 +216,7 @@ def verify_file(
 ) -> tuple[Path, dict]:
     source = Path(path)
     destination, checkpoint = report_paths(Path(output) if output is not None else source)
-    registry = METHODS if methods is None else methods
+    registry = validate_registry(METHODS if methods is None else methods)
     with report_lock(destination):
         # A finished run has renamed the temporary file; accept the original command again.
         readable = source
@@ -180,14 +261,19 @@ def verify_report_locked(
     methods=None,
 ):
     """Execute under the caller's report lock; never reacquire it."""
-    registry = METHODS if methods is None else methods
+    registry = validate_registry(METHODS if methods is None else methods)
     selected = selected_items(report, citation_key)
     used = eligible_items(report)
     input_hash = _fingerprint(report) if report["schema_version"] == 2 else fingerprint(report)
     run = report.get("verification_run")
-    expected = {"fingerprint": input_hash, "methods": list(registry), "policy_version": 4}
-    if report["schema_version"] == 3:
-        expected["orchestration_version"] = 1
+    expected = {
+        "fingerprint": input_hash,
+        "methods": list(registry),
+        "policy_version": 5,
+        "orchestration_version": 2,
+        "provider_protocol_version": 1,
+        "providers": [p.descriptor.serialize() for p in registry.values()],
+    }
     reusable = run and all(run.get(key) == value for key, value in expected.items())
     if not reusable or refresh:
         for item in report["items"] if not reusable else selected:

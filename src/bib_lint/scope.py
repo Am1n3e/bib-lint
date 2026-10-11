@@ -31,6 +31,24 @@ def validate_outcome(method):
             for c in values
         ):
             raise ValueError("Source comparisons must contain fields and comparison results")
+    for key in ("adapter_version", "display_name", "evidence_category"):
+        if key in method and not isinstance(method[key], str):
+            raise ValueError(f"Source {key} must be text")
+    if "canonical_priority" in method and type(method["canonical_priority"]) is not int:
+        raise ValueError("Source canonical_priority must be an integer")
+    if "lookup_complete" in method and type(method["lookup_complete"]) is not bool:
+        raise ValueError("Source lookup_complete must be boolean")
+    if "lookup_provenance" in method:
+        attempts = method["lookup_provenance"]
+        if not isinstance(attempts, list) or any(
+            not isinstance(a, dict)
+            or not isinstance(a.get("strategy"), str)
+            or not isinstance(a.get("scope"), str)
+            or type(a.get("complete")) is not bool
+            or not isinstance(a.get("diagnostic", ""), str)
+            for a in attempts
+        ):
+            raise ValueError("Source lookup provenance must contain structured attempts")
 
 
 def validate_report(report):
@@ -75,6 +93,34 @@ def validate_report(report):
         keys.append(entry["key"])
     if "verification_run" in report and not isinstance(report["verification_run"], dict):
         raise ValueError("verification_run must be an object")
+    run = report.get("verification_run", {})
+    if "provider_protocol_version" in run:
+        if (
+            type(run["provider_protocol_version"]) is not int
+            or run["provider_protocol_version"] <= 0
+        ):
+            raise ValueError("Provider protocol version must be a positive integer")
+    if "providers" in run:
+        from bib_lint.verification.providers.protocol import ProviderDescriptor, RequestPolicy
+
+        providers = run["providers"]
+        if not isinstance(providers, list):
+            raise ValueError("Run providers must be an ordered descriptor list")
+        ids = []
+        for serialized in providers:
+            try:
+                data = dict(serialized)
+                policy = dict(data.pop("request_policy"))
+                policy["backoffs"] = tuple(policy["backoffs"])
+                data["allowed_hosts"] = tuple(data["allowed_hosts"])
+                data["discovery_config"] = tuple(data["discovery_config"].items())
+                descriptor = ProviderDescriptor(**data, request_policy=RequestPolicy(**policy))
+                descriptor.validate()
+            except (AttributeError, KeyError, TypeError, ValueError) as exc:
+                raise ValueError("Invalid saved provider descriptor") from exc
+            ids.append(descriptor.id)
+        if len(set(ids)) != len(ids) or run.get("methods") != ids:
+            raise ValueError("Run provider IDs must match methods without duplicates")
     if "summary" in report and not isinstance(report["summary"], dict):
         raise ValueError("summary must be an object")
     if len(set(keys)) != len(keys):

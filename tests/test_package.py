@@ -42,6 +42,15 @@ def test_installed_wheel_and_local_install_modes(tmp_path):
         "bib_lint/viewer/app.py",
         "bib_lint/viewer/controls.py",
         "bib_lint/viewer/jobs.py",
+        "bib_lint/verification/providers/protocol.py",
+        "bib_lint/verification/providers/registry.py",
+        "bib_lint/verification/providers/context.py",
+        "bib_lint/verification/providers/arxiv.py",
+        "bib_lint/verification/providers/pmlr.py",
+        "bib_lint/verification/providers/jmlr.py",
+        "bib_lint/verification/providers/acl_anthology.py",
+        "bib_lint/verification/providers/neurips.py",
+        "bib_lint/verification/providers/openreview.py",
     }
     with zipfile.ZipFile(wheel) as archive:
         assert required <= set(archive.namelist())
@@ -66,6 +75,13 @@ def test_installed_wheel_and_local_install_modes(tmp_path):
         [str(python), "-c", "import bib_lint; print(bib_lint.__file__)"], paper, env
     ).stdout
     assert str(ROOT) not in location
+    script = """from bib_lint.verification.providers import METHODS
+from bib_lint.verification.providers.registry import validate_registry
+expected = ['arxiv','pmlr','jmlr','acl_anthology','neurips','openreview']
+assert list(validate_registry(METHODS)) == expected
+assert all(p.descriptor.adapter_version for p in METHODS.values())
+"""
+    run([str(python), "-c", script], paper, env)
     assert "bib-lint 0.1.0" in run([str(executable), "--version"], paper, env).stdout
     assert "{verify,view}" in run([str(executable), "--help"], paper, env).stdout
     result = json.loads(run([str(executable), "verify", "empty.bib", "--json"], paper, env).stdout)

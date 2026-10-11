@@ -10,6 +10,8 @@ from bib_lint.scope import eligible_items, fingerprint, selected_items, validate
 from bib_lint.status import reference_status
 from bib_lint.storage import report_lock, write_json
 from bib_lint.verification import _fingerprint, verify_report_locked
+from bib_lint.verification.providers import METHODS
+from bib_lint.verification.providers.registry import validate_registry
 from bib_lint.workflow import _protect
 
 
@@ -88,7 +90,8 @@ def prepare_input(source, *, aux=None, encoding=None, include_source=False):
             run = report.get("verification_run", {})
             if run.get("fingerprint") == old_hash:
                 run["fingerprint"] = fingerprint(report)
-                run["orchestration_version"] = 1
+                # Only the entry/scope fingerprint changes during schema conversion.
+                # Provider and orchestration versions still govern decision reuse.
         report["audit_input"] = {"path": str(source), "aux": None}
     else:
         raise ValueError("Input must be a .bib bibliography or .json report")
@@ -113,6 +116,7 @@ def run_audit(
     methods=None,
 ):
     """Validate first; own one stable lock through initialization and promotion."""
+    registry = validate_registry(METHODS if methods is None else methods)
     workspace = Workspace.for_input(source, output)
     report, inputs, warnings = prepare_input(
         source, aux=aux, encoding=encoding, include_source=include_source
@@ -154,7 +158,7 @@ def run_audit(
                 citation_key=citation_key,
                 progress=progress,
                 client=client,
-                methods=methods,
+                methods=registry,
             )
     return workspace, report, warnings
 

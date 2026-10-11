@@ -207,9 +207,15 @@ def compare_fields(original, found):
 
 def select_result(name, original, candidates, *, authority=False, lookup="search"):
     matches = []
+    matched_candidates = []
+    rejected_candidates = []
     for record in candidates:
-        if identity_match(original, record) and not any(same_record(record, r) for r in matches):
-            matches.append(record)
+        if identity_match(original, record):
+            matched_candidates.append(record)
+            if not any(same_record(record, r) for r in matches):
+                matches.append(record)
+        else:
+            rejected_candidates.append(record)
     result = {
         "name": name,
         "status": "not_found",
@@ -235,6 +241,8 @@ def select_result(name, original, candidates, *, authority=False, lookup="search
             ),
             differences=[c for c in comparisons if c["result"] == "mismatch"],
         )
-    elif candidates:
-        result["rejected_candidates"] = candidates
+    if matched_candidates:
+        result["matched_candidates"] = matched_candidates
+    if rejected_candidates:
+        result["rejected_candidates"] = rejected_candidates
     return result

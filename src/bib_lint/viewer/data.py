@@ -212,6 +212,25 @@ def suggestions(item):
     return rows
 
 
+def source_rows(methods):
+    """Saved source details, including historical and extension source identities."""
+    from bib_lint.status import source_status
+
+    return [
+        {
+            "Source": m["name"],
+            "Status": [source_status(m["status"])],
+            "URL": m.get("source_url") or (m.get("found_ref") or {}).get("url"),
+            "Revision": m.get("adapter_version", ""),
+            "Search scope": "; ".join(
+                dict.fromkeys(a["scope"] for a in m.get("lookup_provenance", []))
+            ),
+            "Error": m.get("error", {}).get("message", "") or m.get("reason", ""),
+        }
+        for m in methods
+    ]
+
+
 def cache_entries(cache_dir, citation_key):
     manifest = json.loads((Path(cache_dir) / "checksum.json").read_text())
     if manifest.get("algorithm") != "sha256" or not isinstance(manifest.get("files"), list):

@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from provider_support import fixture_registry
 from streamlit.testing.v1 import AppTest
 from support import FakeClient, viewer_main
 
@@ -168,7 +169,7 @@ def test_resume_saved_audit_and_key_eligibility(ui, registry, tmp_path):
     # Invalid selected keys fail in shared orchestration without replacing saved bytes.
     before = workspace.checkpoint.read_bytes()
     with pytest.raises(ValueError, match="unused"):
-        run_audit(bib, aux=aux, citation_key="B", client=FakeClient(), methods={})
+        run_audit(bib, aux=aux, citation_key="B", client=FakeClient(), methods=fixture_registry({}))
     assert workspace.checkpoint.read_bytes() == before
 
 
@@ -238,3 +239,43 @@ def test_open_invalid_and_unknown_detail(ui, tmp_path):
     assert any("key not found" in e.value for e in ui.error)
     next(b for b in ui.button if b.label == "All references").click().run()
     assert not ui.error
+
+
+def test_generic_provider_revision_scope_and_extension_display(tmp_path, monkeypatch):
+    from provider_support import FixtureProvider
+
+    from bib_lint.verification.providers import METHODS
+    from bib_lint.verification.providers.protocol import LookupAttempt, LookupResult
+
+    bib = tmp_path / "refs.bib"
+    bib.write_text("@article{Example,title={An Example Paper},author={Jane Smith},year={2025}}")
+    payload = {
+        "heading": "An Example Paper",
+        "people": [{"given": "Jane", "family": "Smith"}],
+        "date": "2025",
+    }
+    providers = [FixtureProvider(name, payload=payload) for name in METHODS]
+
+    def incomplete(*_):
+        return LookupResult(
+            attempts=(LookupAttempt("catalog", "volume 2025", complete=False),),
+            complete=False,
+            diagnostic="Page budget exhausted",
+        )
+
+    providers.append(FixtureProvider("extension", version="2", lookup=incomplete))
+    workspace, _, _ = run_audit(bib, methods=providers, client=FakeClient())
+    monkeypatch.chdir(tmp_path)
+    app = AppTest.from_function(viewer_main, default_timeout=10).run()
+    input_field(app, "output_input").set_value(str(workspace.root))
+    button(app, "open_audit").click().run()
+    app.query_params["key"] = "Example"
+    app.run()
+    assert not app.exception
+    rows = next(frame.value for frame in app.dataframe if "Source" in frame.value.columns)
+    assert set(rows["Source"]) == set(METHODS) | {"extension"}
+    extension = rows[rows["Source"] == "extension"].iloc[0]
+    assert extension["Revision"] == "2" and extension["Search scope"] == "volume 2025"
+    assert extension["Error"] == "Page budget exhausted"
+    raw = next(value.value for value in app.json if "extension" in value.value)
+    assert "incomplete_search" in raw

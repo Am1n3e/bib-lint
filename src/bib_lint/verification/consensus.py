@@ -50,9 +50,7 @@ def build_consensus(methods):
     if selected:
         primary = [m for m in selected if m.get("authority")]
         if primary:
-            preferred = sorted(
-                primary, key=lambda m: {"publisher": 0, "crossref": 1, "arxiv": 2}.get(m["name"], 9)
-            )
+            preferred = sorted(primary, key=lambda m: (m.get("canonical_priority", 9), m["name"]))
             canonical = preferred[0]["found_ref"]
             conflicting = any(
                 any(
@@ -93,7 +91,7 @@ def build_consensus(methods):
         "methods": methods,
         "canonical_ref": canonical,
         "reason": reason,
-        "policy_version": 4,
+        "policy_version": 5,
         "checked_fields": ["title", "authors", "year", "venue", "doi", "arxiv"],
         "scope": "Core citation metadata only; not claim support, pages, volume, or edition",
     }

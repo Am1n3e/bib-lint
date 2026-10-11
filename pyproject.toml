@@ -1,0 +1,39 @@
+[project]
+name = "bib-lint"
+version = "0.1.0"
+description = "Read-only BibTeX parsing for reproducible reference audits"
+readme = "README.md"
+authors = [
+    { name = "Iryam", email = "iryam9a@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.13,<5",
+    "defusedxml>=0.7,<1",
+    "httpx>=0.28,<0.29",
+    "pybtex>=0.26,<0.27",
+    "streamlit>=1.55,<2",
+]
+
+[project.scripts]
+bib-lint = "bib_lint.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

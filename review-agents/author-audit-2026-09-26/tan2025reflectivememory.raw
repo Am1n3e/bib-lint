@@ -1,0 +1,32 @@
+@inproceedings{tan-etal-2025-prospect,
+    title = "In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents",
+    author = "Tan, Zhen  and
+      Yan, Jun  and
+      Hsu, I-Hung  and
+      Han, Rujun  and
+      Wang, Zifeng  and
+      Le, Long  and
+      Song, Yiwen  and
+      Chen, Yanfei  and
+      Palangi, Hamid  and
+      Lee, George  and
+      Iyer, Anand Rajan  and
+      Chen, Tianlong  and
+      Liu, Huan  and
+      Lee, Chen-Yu  and
+      Pfister, Tomas",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.acl-long.413/",
+    doi = "10.18653/v1/2025.acl-long.413",
+    pages = "8416--8439",
+    ISBN = "979-8-89176-251-0"
+}
+

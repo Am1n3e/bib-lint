@@ -1,0 +1,23 @@
+@inproceedings{hu-etal-2025-hiagent,
+    title = "{H}i{A}gent: Hierarchical Working Memory Management for Solving Long-Horizon Agent Tasks with Large Language Model",
+    author = "Hu, Mengkang  and
+      Chen, Tianxing  and
+      Chen, Qiguang  and
+      Mu, Yao  and
+      Shao, Wenqi  and
+      Luo, Ping",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.acl-long.1575/",
+    doi = "10.18653/v1/2025.acl-long.1575",
+    pages = "32779--32798",
+    ISBN = "979-8-89176-251-0"
+}
+
